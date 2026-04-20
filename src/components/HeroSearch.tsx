@@ -291,7 +291,7 @@ const HeroSearch = () => {
 
           {/* Welcome Message */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mt-6 font-medium">
-            Busca comida, medicinas, tecnología o lo que necesites en todo Panamá
+            Busca comida, medicinas, tecnología o lo que necesites en todo Panamá - VERSIÓN NUEVA 🚀
           </p>
 
           

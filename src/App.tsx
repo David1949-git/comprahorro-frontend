@@ -47,7 +47,7 @@ export default function App() {
           ComprAhorro
         </h1>
         <p className={`text-slate-500 font-medium italic transition-all duration-700 ${!tieneResultados ? 'text-xl mb-10' : 'text-sm mb-4'}`}>
-          Busca, compara y ahorra en Panamá 🇵🇦
+          Busca, compara y ahorra en Panamá - ACTUALIZADO 2026 🚀
         </p>
 
         {/* BUSCADOR POTENTE */}
