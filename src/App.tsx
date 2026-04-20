@@ -102,7 +102,7 @@ export default function App() {
             ))
           ) : !cargando && !tieneResultados && (
             <div className="text-center opacity-20 mt-10">
-              <p className="text-2xl font-black uppercase tracking-widest">Esperando tu próxima búsqueda...</p>
+              <p className="text-2xl font-black uppercase tracking-widest">        <div className="mt-8 p-4 bg-emerald-50 rounded-xl">¡Nosotros buscamos, tú ahorras!</div></p>
             </div>
           )}
         </div>
@@ -110,3 +110,4 @@ export default function App() {
     </div>
   );
 }
+
