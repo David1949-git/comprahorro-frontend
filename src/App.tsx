@@ -102,7 +102,25 @@ export default function App() {
             ))
           ) : !cargando && !tieneResultados && (
             <div className="text-center opacity-20 mt-10">
-              <p className="text-2xl font-black uppercase tracking-widest">        <div className="mt-8 p-4 bg-emerald-50 rounded-xl">¡Nosotros buscamos, tú ahorras!</div></p>
+              <p className="text-2xl font-black uppercase tracking-widest">                <div className="mt-12 max-w-2xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-slate-800 mb-8">
+            ¡Nosotros buscamos, tú ahorras!
+          </h2>
+          <div className="space-y-6 text-left inline-block">
+            <div className="flex items-start">
+              <span className="flex-shrink-0 h-6 w-6 text-emerald-500 mr-3">✓</span>
+              <p className="text-lg text-slate-600">Compara precios de varios comercios en tiempo real.</p>
+            </div>
+            <div className="flex items-start">
+              <span className="flex-shrink-0 h-6 w-6 text-emerald-500 mr-3">✓</span>
+              <p className="text-lg text-slate-600">Elige con total calma y tranquilidad.</p>
+            </div>
+            <div className="flex items-start">
+              <span className="flex-shrink-0 h-6 w-6 text-emerald-500 mr-3">✓</span>
+              <p className="text-lg text-slate-600">Compra directo sin intermediarios para tu máximo ahorro.</p>
+            </div>
+          </div>
+        </div></p>
             </div>
           )}
         </div>
@@ -110,4 +128,5 @@ export default function App() {
     </div>
   );
 }
+
 
