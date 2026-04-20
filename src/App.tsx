@@ -24,7 +24,7 @@ export default function App() {
      setVeredicto('');
      
      try {
-        const url = `http://localhost:10000/ahorros/buscar?q=${encodeURIComponent(termino)}&lat=${coords.lat}&lon=${coords.lon}`;
+        const url = `https://comprahorro-backend-1.onrender.com/ahorros/buscar?q=${encodeURIComponent(termino)}&lat=${coords.lat}&lon=${coords.lon}`;
         const respuesta = await fetch(url);
         const data = await respuesta.json();
         setResultados(data.resultados || []);
