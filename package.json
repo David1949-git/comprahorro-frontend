@@ -13,7 +13,6 @@
     "test:watch": "vitest",
     "vercel-build": "npm run build",
     "vercel-dev": "npm run dev",
-    "install": "npm install",
     "start": "npm run preview"
   },
   "dependencies": {
