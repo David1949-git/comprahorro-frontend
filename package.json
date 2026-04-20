@@ -3,17 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {
+ "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "build:dev": "vite build --mode development",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "vercel-build": "npm run build",
-    "vercel-dev": "npm run dev",
-    "start": "npm run preview"
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
