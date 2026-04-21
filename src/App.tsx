@@ -24,13 +24,10 @@ export default function App() {
      setVeredicto('');
      
      try {
-        const url = `https://comprahorro-backend-1.onrender.com/buscar?q=${encodeURIComponent(termino)}`;
+        const url = `https://comprahorro-backend-1.onrender.com/ahorros/buscar?q=${encodeURIComponent(termino)}`;
         const respuesta = await fetch(url, {
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          signal: AbortSignal.timeout ? AbortSignal.timeout(10000) : new AbortController().signal // 10 second timeout
+          signal: AbortSignal.timeout ? AbortSignal.timeout(30000) : new AbortController().signal // 30 second timeout
         });
         
         if (!respuesta.ok) {
