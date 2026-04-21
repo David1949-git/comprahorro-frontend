@@ -30,7 +30,7 @@ export default function App() {
         setResultados(data.resultados || []);
         setVeredicto(data.veredicto || '');
      } catch (error) {
-        setVeredicto("Error de conexión con el motor local.");
+        setVeredicto("El motor está despertando. Por favor, espera unos segundos o reintenta la búsqueda.");
      }
      setCargando(false);
   };
