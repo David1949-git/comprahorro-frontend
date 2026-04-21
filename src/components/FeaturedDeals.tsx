@@ -31,7 +31,7 @@ const FeaturedDeals = () => {
     // Fetch real data from API
     const fetchFeaturedDeals = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:10000';
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://proyectocompras.onrender.com';
         const response = await fetch(`${apiUrl}/ahorros/destacados`);
         
         if (response.ok) {
@@ -196,3 +196,4 @@ const FeaturedDeals = () => {
 };
 
 export default FeaturedDeals;
+
