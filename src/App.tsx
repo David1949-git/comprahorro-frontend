@@ -25,12 +25,27 @@ export default function App() {
      
      try {
         const url = `https://comprahorro-backend-1.onrender.com/buscar?q=${encodeURIComponent(termino)}&lat=${coords.lat}&lon=${coords.lon}`;
-        const respuesta = await fetch(url);
+        const respuesta = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          signal: AbortSignal.timeout ? AbortSignal.timeout(10000) : new AbortController().signal // 10 second timeout
+        });
+        
+        if (!respuesta.ok) {
+          throw new Error(`HTTP ${respuesta.status}: ${respuesta.statusText}`);
+        }
+        
         const data = await respuesta.json();
         setResultados(data.resultados || []);
         setVeredicto(data.veredicto || '');
      } catch (error) {
-        setVeredicto("El motor está despertando. Por favor, espera unos segundos o reintenta la búsqueda.");
+        if (error.name === 'AbortError') {
+          setVeredicto("Tiempo de espera agotado. Por favor, reintenta.");
+        } else {
+          setVeredicto("El motor está despertando. Por favor, espera unos segundos o reintenta la búsqueda.");
+        }
      }
      setCargando(false);
   };
