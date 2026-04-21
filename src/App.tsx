@@ -42,6 +42,15 @@ export default function App() {
       
       {/* HEADER DINÁMICO */}
       <div className={`w-full max-w-6xl flex flex-col items-center transition-all duration-700 ${!tieneResultados ? 'mb-8' : 'mb-6'}`}>
+        <img src="/logo.png" alt="Logo" className={`transition-all duration-700 ${!tieneResultados ? 'w-48 mb-6' : 'w-24 mb-2'}`} />
+        <h1 className={`font-black text-[#0a192f] tracking-tighter transition-all duration-700 ${!tieneResultados ? 'text-6xl' : 'text-3xl'}`}>
+          ComprAhorro
+        </h1>
+        <p className={`text-slate-500 font-medium italic transition-all duration-700 ${!tieneResultados ? 'text-xl mb-10' : 'text-sm mb-4'}`}>
+          Busca, compara y ahorra
+        </p>
+        
+        {/* SLOGAN ESmeralda */}
         <div className="flex flex-col items-center w-full max-w-2xl mx-auto mb-8 px-4">
           <h2 className="text-xl md:text-2xl font-bold text-emerald-600 mb-2 text-center animate-fade-in">
             ¡Nosotros buscamos, tú ahorras!
@@ -103,34 +112,11 @@ export default function App() {
                 </div>
               </div>
             ))
-          ) : !cargando && !tieneResultados && (
-            <div className="text-center opacity-20 mt-10">
-              <p className="text-2xl font-black uppercase tracking-widest">                <div className="mt-12 max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-slate-800 mb-8">
-            ¡Nosotros buscamos, tú ahorras!
-          </h2>
-          <div className="space-y-6 text-left inline-block">
-            <div className="flex items-start">
-              <span className="flex-shrink-0 h-6 w-6 text-emerald-500 mr-3">✓</span>
-              <p className="text-lg text-slate-600">Compara precios de varios comercios en tiempo real.</p>
-            </div>
-            <div className="flex items-start">
-              <span className="flex-shrink-0 h-6 w-6 text-emerald-500 mr-3">✓</span>
-              <p className="text-lg text-slate-600">Elige con total calma y tranquilidad.</p>
-            </div>
-            <div className="flex items-start">
-              <span className="flex-shrink-0 h-6 w-6 text-emerald-500 mr-3">✓</span>
-              <p className="text-lg text-slate-600">Compra directo sin intermediarios para tu máximo ahorro.</p>
-            </div>
-          </div>
-        </div></p>
-            </div>
-          )}
+          ) : !cargando && !tieneResultados && null}
         </div>
       </div>
     </div>
   );
 }
-
 
 
