@@ -45,10 +45,16 @@ export default function App() {
   return (
     <div className={`min-h-screen bg-[#f8fafc] flex flex-col items-center px-4 font-sans transition-all duration-700 ${!tieneResultados ? 'justify-center' : 'pt-10'}`}>
       
-      {/* HEADER CON LOGO CIRCULAR */}
+      {/* --- HEADER: Diseño de Marca Estilo Uber con Contenedor Compacto --- */}
       <div className={`w-full flex flex-col items-center transition-all duration-700 ${!tieneResultados ? 'mb-4' : 'mb-6'}`}>
-        <div className={`bg-white rounded-full flex items-center justify-center p-4 shadow-2xl transition-all duration-700 ${!tieneResultados ? 'w-60 h-60 mb-6' : 'w-24 h-24 mb-2'}`}>
-          <img src="/logo.png" alt="ComprAhorro" className="w-full h-full object-contain" />
+        
+        {/* Contenedor circular: Mucho más pequeño, con sombra suave y microborde */}
+        <div className={`bg-white rounded-full flex items-center justify-center p-3 shadow-[0_15px_45px_rgba(0,0,0,0.12)] border border-slate-100/50 transition-all duration-700 ${!tieneResultados ? 'w-40 h-40 mb-5' : 'w-20 h-20 mb-2'}`}>
+          <img 
+            src="/logo.png" 
+            alt="ComprAhorro" 
+            className={`transition-all duration-700 object-contain ${!tieneResultados ? 'w-32' : 'w-16'}`} 
+          />
         </div>
         <h1 className={`font-black text-[#0a192f] transition-all duration-700 ${!tieneResultados ? 'text-6xl' : 'text-3xl'}`}>
           ComprAhorro
