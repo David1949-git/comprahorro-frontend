@@ -16,7 +16,14 @@ export default function App() {
     const timeoutId = setTimeout(() => controller.abort(), 30000);
 
     try {
-      const url = `https://comprahorro-backend-1.onrender.com/ahorros/buscar?q=${encodeURIComponent(termino)}`;
+      // Environment-based API configuration
+      const isDevelopment = import.meta.env.DEV;
+      const apiUrl = isDevelopment 
+        ? 'http://localhost:10000/ahorros' 
+        : 'https://proyectocompras.onrender.com/ahorros';
+      
+      // All radar calls use /buscar endpoint with ?q= parameter
+      const url = `${apiUrl}/buscar?q=${encodeURIComponent(termino)}`;
       
       const respuesta = await fetch(url, {
         method: 'GET',
@@ -46,14 +53,14 @@ export default function App() {
     <div className={`min-h-screen bg-[#f8fafc] flex flex-col items-center px-4 font-sans transition-all duration-700 ${!tieneResultados ? 'justify-center' : 'pt-10'}`}>
       
       {/* --- HEADER: Diseño de Marca Estilo Uber con Contenedor Compacto --- */}
-      <div className={`w-full flex flex-col items-center transition-all duration-700 ${!tieneResultados ? 'mb-4' : 'mb-6'}`}>
+      <div className={`w-full flex flex-col items-center justify-center transition-all duration-700 ${!tieneResultados ? 'mb-4' : 'mb-6'}`}>
         
-        {/* Contenedor circular: Mucho más pequeño, con sombra suave y microborde */}
-        <div className={`bg-white rounded-full flex items-center justify-center p-3 shadow-[0_15px_45px_rgba(0,0,0,0.12)] border border-slate-100/50 transition-all duration-700 ${!tieneResultados ? 'w-40 h-40 mb-5' : 'w-20 h-20 mb-2'}`}>
+        {/* Contenedor circular: Logo flotando sin fondo, con sombra suave */}
+        <div className={`rounded-full flex items-center justify-center p-2 shadow-[0_6px_24px_rgba(0,0,0,0.06)] transition-all duration-700 ${!tieneResultados ? 'w-28 h-28 mb-4' : 'w-14 h-14 mb-2'}`}>
           <img 
             src="/logo.png" 
             alt="ComprAhorro" 
-            className={`transition-all duration-700 object-contain ${!tieneResultados ? 'w-32' : 'w-16'}`} 
+            className={`transition-all duration-700 object-contain ${!tieneResultados ? 'w-[90%] h-[90%]' : 'w-[90%] h-[90%]'}`} 
           />
         </div>
         <h1 className={`font-black text-[#0a192f] transition-all duration-700 ${!tieneResultados ? 'text-6xl' : 'text-3xl'}`}>
