@@ -1,0 +1,1 @@
+const fs=require('fs');fs.writeFileSync('src/components/PiggyLogo.tsx', fs.readFileSync('src/components/PiggyLogo.tsx','utf8').replace('bg-white rounded-lg','rounded-full bg-gradient-to-br from-emerald-100/40 to-transparent backdrop-blur-sm'), 'utf8');console.log('OK');

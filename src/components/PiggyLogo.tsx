@@ -3,7 +3,7 @@ import piggyLogo from "@/assets/piggy-logo.png"; // This is now piggy-logo-ARmd5
 const PiggyLogo = ({ size = 32, className }: { size?: number; className?: string }) => {
   return (
     <div
-      className={`bg-white rounded-lg flex items-center justify-center overflow-hidden ${className}`}
+      className={`rounded-full bg-gradient-to-br from-emerald-100/40 to-transparent backdrop-blur-sm flex items-center justify-center overflow-hidden ${className}`}
       style={{ width: size, height: size }}
     >
       <img
