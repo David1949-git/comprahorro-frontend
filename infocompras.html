@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>InfoCompras - ComprAhorro</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .ic-header { padding: 28px 20px 0; max-width: 900px; margin: 0 auto; }
+    .ic-title { font-size: 22px; font-weight: 800; color: var(--blue-dark); margin-bottom: 4px; }
+    .ic-sub { font-size: 13px; color: var(--gray-text); margin-bottom: 24px; }
+    .ic-tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--blue-border); margin-bottom: 24px; flex-wrap: wrap; }
+    .ic-tab { padding: 10px 20px; font-size: 14px; font-weight: 600; color: var(--gray-text); cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: color 0.2s, border-color 0.2s; font-family: 'Poppins', sans-serif; background: none; border-top: none; border-left: none; border-right: none; }
+    .ic-tab.active { color: var(--blue-main); border-bottom-color: var(--blue-main); }
+    .ic-tab:hover { color: var(--blue-main); }
+    .ic-content { max-width: 900px; margin: 0 auto; padding: 0 20px 40px; }
+    .ic-panel { display: none; }
+    .ic-panel.active { display: block; }
+    .list-item { background: var(--white); border: 1px solid var(--blue-border); border-radius: var(--radius); padding: 14px 16px; display: flex; align-items: center; gap: 12px; margin-bottom: 10px; transition: box-shadow 0.2s; }
+    .list-item:hover { box-shadow: var(--shadow-sm); }
+    .list-item-name { flex: 1; font-size: 14px; font-weight: 600; color: var(--blue-dark); }
+    .list-item-store { font-size: 12px; color: var(--blue-mid); }
+    .list-item-price { font-size: 15px; font-weight: 700; color: var(--blue-main); }
+    .list-item-del { background: none; border: none; cursor: pointer; font-size: 16px; color: var(--gray-hint); transition: color 0.2s; padding: 4px; }
+    .list-item-del:hover { color: #E53E3E; }
+    .list-check { width: 18px; height: 18px; accent-color: var(--blue-main); cursor: pointer; }
+    .list-empty { text-align: center; padding: 40px 20px; }
+    .list-empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .list-empty-text { font-size: 14px; color: var(--gray-text); }
+    .list-empty-sub { font-size: 12px; color: var(--gray-hint); margin-top: 6px; }
+    .list-total { background: var(--blue-light); border: 1px solid var(--blue-border); border-radius: var(--radius); padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+    .list-total-label { font-size: 14px; font-weight: 600; color: var(--blue-dark); }
+    .list-total-amount { font-size: 20px; font-weight: 800; color: var(--blue-main); }
+    .list-actions { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .history-item { background: var(--white); border: 1px solid var(--blue-border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; }
+    .history-query { font-size: 14px; font-weight: 700; color: var(--blue-dark); }
+    .history-meta { font-size: 12px; color: var(--gray-hint); margin-top: 3px; }
+    .history-repeat { background: var(--blue-light); color: var(--blue-main); border: 1px solid var(--blue-border); border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; float: right; transition: all 0.2s; }
+    .history-repeat:hover { background: var(--blue-main); color: var(--white); }
+    .fav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+    .fav-card { background: var(--white); border: 1px solid var(--blue-border); border-radius: var(--radius-lg); padding: 16px; position: relative; }
+    .fav-card .store-name { font-size: 11px; font-weight: 700; color: var(--blue-main); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+    .fav-card .product-name { font-size: 13px; font-weight: 600; color: var(--blue-dark); margin-bottom: 6px; }
+    .fav-card .product-price { font-size: 18px; font-weight: 800; color: var(--blue-main); }
+    .fav-del { position: absolute; top: 10px; right: 10px; background: none; border: none; cursor: pointer; font-size: 16px; color: var(--gray-hint); transition: color 0.2s; }
+    .fav-del:hover { color: #E53E3E; }
+    .logout-btn { background: none; border: 1.5px solid var(--blue-border); color: var(--blue-mid); padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s; }
+    .logout-btn:hover { border-color: #E53E3E; color: #E53E3E; }
+    .back-btn { background: none; border: 1.5px solid var(--blue-border); color: var(--blue-mid); padding: 7px 14px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 16px; }
+    .back-btn:hover { border-color: var(--blue-main); color: var(--blue-main); }
+    .badge-count { background: var(--blue-main); color: white; font-size: 10px; font-weight: 700; border-radius: 10px; padding: 1px 6px; margin-left: 6px; }
+  </style>
+</head>
+<body>
+<div class="page-wrapper">
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <img src="logo.jpeg" alt="ComprAhorro" class="nav-logo"/>
+      <span class="nav-name">Compr<span>Ahorro</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="dashboard.html" style="font-size:13px;font-weight:600;color:var(--blue-mid);">Buscar</a>
+      <span style="font-size:13px;font-weight:600;color:var(--blue-dark);" id="user-name">🐷</span>
+      <button class="logout-btn" onclick="doLogout()">Salir</button>
+    </div>
+  </nav>
+  <main class="main-content">
+    <div class="ic-header fade-in">
+      <a href="dashboard.html" class="back-btn">← Volver a busqueda</a>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;">
+        <h1 class="ic-title">InfoCompras</h1>
+        <span class="badge badge-green">Solo supermercados</span>
+      </div>
+      <p class="ic-sub">Tu lista de compras, historial y productos favoritos</p>
+      <div class="ic-tabs">
+        <button class="ic-tab active" onclick="showTab('lista',this)">🛒 Mi Lista <span class="badge-count" id="lista-count">0</span></button>
+        <button class="ic-tab" onclick="showTab('historial',this)">🕒 Historial <span class="badge-count" id="hist-count">0</span></button>
+        <button class="ic-tab" onclick="showTab('favoritos',this)">⭐ Favoritos <span class="badge-count" id="fav-count">0</span></button>
+      </div>
+    </div>
+    <div class="ic-content">
+      <div class="ic-panel active" id="panel-lista">
+        <div class="list-actions">
+          <button class="btn btn-outline" style="padding:8px 16px;font-size:13px;" onclick="clearChecked()">🗑 Quitar marcados</button>
+          <button class="btn btn-outline" style="padding:8px 16px;font-size:13px;" onclick="clearAll()">🗑 Limpiar todo</button>
+        </div>
+        <div id="lista-items"></div>
+        <div id="lista-total"></div>
+      </div>
+      <div class="ic-panel" id="panel-historial">
+        <div id="hist-items"></div>
+      </div>
+      <div class="ic-panel" id="panel-favoritos">
+        <div class="fav-grid" id="fav-items"></div>
+      </div>
+    </div>
+  </main>
+  <footer class="footer">ComprAhorro 2026 · El Waze del Shopping</footer>
+</div>
+<script>
+  const token = localStorage.getItem('comprAhorro_token');
+  if (!token) window.location.href = 'login.html';
+  function parseJWT(t){try{return JSON.parse(atob(t.split('.')[1]));}catch(e){return {};}}
+  const name=(parseJWT(token).name||parseJWT(token).email||'usuario').split(' ')[0];
+  document.getElementById('user-name').textContent='🐷 '+name;
+  function showTab(tab,btn){
+    document.querySelectorAll('.ic-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.ic-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+tab).classList.add('active');
+  }
+  const KEYS={lista:'ca_lista',historial:'ca_historial',favoritos:'ca_favoritos'};
+  const get=k=>JSON.parse(localStorage.getItem(KEYS[k])||'[]');
+  const save=(k,v)=>localStorage.setItem(KEYS[k],JSON.stringify(v));
+  function renderLista(){
+    const items=get('lista');
+    document.getElementById('lista-count').textContent=items.length;
+    const el=document.getElementById('lista-items');
+    const totalEl=document.getElementById('lista-total');
+    if(!items.length){
+      el.innerHTML='<div class="list-empty"><div class="list-empty-icon">🛒</div><div class="list-empty-text">Tu lista esta vacia</div><div class="list-empty-sub">Agrega productos desde resultados de supermercado</div></div>';
+      totalEl.innerHTML=''; return;
+    }
+    el.innerHTML=items.map((p,i)=>`
+      <div class="list-item">
+        <input type="checkbox" class="list-check" ${p.checked?'checked':''} onchange="toggleCheck(${i})"/>
+        <div style="flex:1;">
+          <div class="list-item-name" style="${p.checked?'text-decoration:line-through;color:var(--gray-hint)':''}">${p.title||p.name}</div>
+          <div class="list-item-store">${p.store||''}</div>
+        </div>
+        <div class="list-item-price">$${parseFloat(p.price||0).toFixed(2)}</div>
+        <button class="list-item-del" onclick="removeItem(${i})">✕</button>
+      </div>`).join('');
+    const total=items.filter(p=>!p.checked).reduce((s,p)=>s+parseFloat(p.price||0),0);
+    totalEl.innerHTML=`<div class="list-total"><span class="list-total-label">Total estimado:</span><span class="list-total-amount">$${total.toFixed(2)}</span></div>`;
+  }
+  function toggleCheck(i){const items=get('lista');items[i].checked=!items[i].checked;save('lista',items);renderLista();}
+  function removeItem(i){const items=get('lista');items.splice(i,1);save('lista',items);renderLista();}
+  function clearChecked(){save('lista',get('lista').filter(p=>!p.checked));renderLista();}
+  function clearAll(){if(!confirm('Limpiar toda la lista?'))return;save('lista',[]);renderLista();}
+  function renderHistorial(){
+    const items=get('historial');
+    document.getElementById('hist-count').textContent=items.length;
+    const el=document.getElementById('hist-items');
+    if(!items.length){el.innerHTML='<div class="list-empty"><div class="list-empty-icon">🕒</div><div class="list-empty-text">Sin historial aun</div><div class="list-empty-sub">Las busquedas de supermercado apareceran aqui</div></div>';return;}
+    el.innerHTML=[...items].reverse().map(h=>`
+      <div class="history-item">
+        <button class="history-repeat" onclick="window.location.href='results_super.html?q='+encodeURIComponent('${h.query}')">🔍 Buscar de nuevo</button>
+        <div class="history-query">${h.query}</div>
+        <div class="history-meta">${h.results||0} resultado(s) · ${new Date(h.date).toLocaleDateString('es-PA')}</div>
+      </div>`).join('');
+  }
+  function renderFavoritos(){
+    const items=get('favoritos');
+    document.getElementById('fav-count').textContent=items.length;
+    const el=document.getElementById('fav-items');
+    if(!items.length){el.innerHTML='<div class="list-empty"><div class="list-empty-icon">⭐</div><div class="list-empty-text">Sin favoritos aun</div></div>';return;}
+    el.innerHTML=items.map((p,i)=>`
+      <div class="fav-card">
+        <button class="fav-del" onclick="removeFav(${i})">✕</button>
+        <div class="store-name">${p.store||'Supermercado'}</div>
+        <div class="product-name">${p.title||p.name}</div>
+        <div class="product-price">$${parseFloat(p.price||0).toFixed(2)}</div>
+      </div>`).join('');
+  }
+  function removeFav(i){const items=get('favoritos');items.splice(i,1);save('favoritos',items);renderFavoritos();}
+  function doLogout(){localStorage.removeItem('comprAhorro_token');window.location.href='index.html';}
+  renderLista(); renderHistorial(); renderFavoritos();
+</script>
+</body>
+</html>

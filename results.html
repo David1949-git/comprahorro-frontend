@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resultados - ComprAhorro</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .results-header { padding: 28px 20px 16px; max-width: 900px; margin: 0 auto; }
+    .results-top { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .back-btn { background: none; border: 1.5px solid var(--blue-border); color: var(--blue-mid); padding: 7px 14px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+    .back-btn:hover { border-color: var(--blue-main); color: var(--blue-main); }
+    .results-title { font-size: 14px; color: var(--gray-text); margin-bottom: 4px; }
+    .results-title strong { color: var(--blue-dark); font-size: 18px; }
+    .results-count { font-size: 12px; color: var(--gray-hint); margin-bottom: 12px; }
+    .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; max-width: 900px; margin: 0 auto; padding: 0 20px 40px; }
+    .loading { text-align: center; padding: 60px 20px; }
+    .loading-pig { font-size: 48px; animation: bounce 0.8s infinite alternate; }
+    @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+    .loading-text { font-size: 15px; color: var(--blue-mid); font-weight: 500; margin-top: 14px; }
+    .loading-sub { font-size: 12px; color: var(--gray-hint); margin-top: 6px; }
+    .empty-state { text-align: center; padding: 60px 20px; }
+    .empty-icon { font-size: 48px; margin-bottom: 14px; }
+    .empty-title { font-size: 17px; font-weight: 700; color: var(--blue-dark); margin-bottom: 6px; }
+    .empty-sub { font-size: 13px; color: var(--gray-text); }
+    .source-tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px; margin-bottom: 6px; }
+    .source-ai { background: #EEF5FF; color: #1A5FA8; }
+    .source-web { background: #FFF8E6; color: #9A6800; }
+    .source-local { background: #E1F5EE; color: #0F6E56; }
+    .product-rating { font-size: 12px; color: var(--gold); margin-top: 4px; }
+    .product-meta { font-size: 11px; color: var(--gray-hint); margin-top: 4px; }
+    .filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+    .filter-label { font-size: 12px; color: var(--gray-hint); }
+    .filter-btn { background: var(--white); border: 1px solid var(--blue-border); border-radius: 16px; padding: 5px 12px; font-size: 12px; font-weight: 500; color: var(--blue-mid); cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s; }
+    .filter-btn.active, .filter-btn:hover { background: var(--blue-main); color: var(--white); border-color: var(--blue-main); }
+    .logout-btn { background: none; border: 1.5px solid var(--blue-border); color: var(--blue-mid); padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s; }
+    .logout-btn:hover { border-color: #E53E3E; color: #E53E3E; }
+  </style>
+</head>
+<body>
+<div class="page-wrapper">
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <img src="logo.jpeg" alt="ComprAhorro" class="nav-logo"/>
+      <span class="nav-name">Compr<span>Ahorro</span></span>
+    </a>
+    <div class="nav-links">
+      <span style="font-size:13px;font-weight:600;color:var(--blue-dark);" id="user-name">🐷</span>
+      <button class="logout-btn" onclick="doLogout()">Salir</button>
+    </div>
+  </nav>
+  <main class="main-content">
+    <div class="results-header">
+      <div class="results-top">
+        <a href="dashboard.html" class="back-btn">← Volver</a>
+        <div style="flex:1;min-width:200px;">
+          <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Nueva busqueda..." onkeydown="if(event.key==='Enter')newSearch()"/>
+            <button onclick="newSearch()">BUSCAR</button>
+          </div>
+        </div>
+      </div>
+      <div class="results-title">Resultados para: <strong id="query-label">...</strong></div>
+      <div class="results-count" id="results-count"></div>
+      <div class="filter-row" id="filter-row" style="display:none;">
+        <span class="filter-label">Ordenar:</span>
+        <button class="filter-btn active" onclick="sortResults('precio',this)">Menor precio</button>
+        <button class="filter-btn" onclick="sortResults('tienda',this)">Por tienda</button>
+        <button class="filter-btn" onclick="sortResults('relevancia',this)">Relevancia</button>
+      </div>
+    </div>
+    <div class="loading" id="loading">
+      <div class="loading-pig">🐷</div>
+      <div class="loading-text">Buscando los mejores precios...</div>
+      <div class="loading-sub">Consultando tiendas en tiempo real</div>
+    </div>
+    <div class="results-grid" id="results-grid" style="display:none;"></div>
+    <div class="empty-state" id="empty-state" style="display:none;">
+      <div class="empty-icon">🔍</div>
+      <div class="empty-title">No encontramos resultados</div>
+      <div class="empty-sub">Intenta con otras palabras o revisa la ortografia</div>
+    </div>
+  </main>
+  <footer class="footer">ComprAhorro 2026</footer>
+</div>
+<script>
+  const token = localStorage.getItem('comprAhorro_token');
+  if (!token) window.location.href = 'login.html';
+  function parseJWT(t) { try { return JSON.parse(atob(t.split('.')[1])); } catch(e) { return {}; } }
+  const name = (parseJWT(token).name || parseJWT(token).email || 'usuario').split(' ')[0];
+  document.getElementById('user-name').textContent = '🐷 ' + name;
+  const params = new URLSearchParams(window.location.search);
+  const query = params.get('q') || '';
+  document.getElementById('query-label').textContent = query;
+  document.getElementById('search-input').value = query;
+  let allResults = [];
+  function sourceTag(src) {
+    if (src==='local') return '<span class="source-tag source-local">📦 Catalogo</span>';
+    if (src==='ai') return '<span class="source-tag source-ai">🤖 IA</span>';
+    return '<span class="source-tag source-web">🌐 Web</span>';
+  }
+  function stars(n) { const f=Math.round(n||0); return '★'.repeat(f)+'☆'.repeat(5-f); }
+  function renderCards(data) {
+    const grid = document.getElementById('results-grid');
+    if (!data.length) { document.getElementById('empty-state').style.display='block'; grid.style.display='none'; return; }
+    document.getElementById('filter-row').style.display='flex';
+    document.getElementById('results-count').textContent = data.length + ' resultado(s) encontrado(s)';
+    const best = data.reduce((a,b) => parseFloat(a.price)<parseFloat(b.price)?a:b, data[0]);
+    grid.innerHTML = data.map((p,i) => `
+      <div class="product-card fade-in" style="animation-delay:${i*0.05}s">
+        <span class="pig-mark">🐷</span>
+        ${p===best?'<div class="best-badge">✅ Mejor precio</div>':''}
+        ${sourceTag(p.source)}
+        <div class="store-name">${p.store||'Tienda'}</div>
+        <div class="product-name">${p.title||p.name}</div>
+        <div class="product-price">$${parseFloat(p.price).toFixed(2)} <span>${p.unit||''}</span></div>
+        ${p.rating?`<div class="product-rating">${stars(p.rating)} ${p.rating}</div>`:''}
+        ${p.location?`<div class="product-meta">📍 ${p.location}</div>`:''}
+      </div>`).join('');
+    grid.style.display='grid';
+  }
+  function sortResults(by,btn) {
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    let sorted=[...allResults];
+    if(by==='precio') sorted.sort((a,b)=>parseFloat(a.price)-parseFloat(b.price));
+    if(by==='tienda') sorted.sort((a,b)=>(a.store||'').localeCompare(b.store||''));
+    renderCards(sorted);
+  }
+  async function fetchResults(q) {
+    document.getElementById('loading').style.display='block';
+    document.getElementById('results-grid').style.display='none';
+    document.getElementById('empty-state').style.display='none';
+    try {
+      const res = await fetch('https://comprahorro-backend.onrender.com/ahorros/buscar?q='+encodeURIComponent(q), { headers:{'Authorization':'Bearer '+token} });
+      if(res.status===401){doLogout();return;}
+      const data = await res.json();
+      allResults = Array.isArray(data)?data:(data.results||[]);
+    } catch(e) { allResults=[]; }
+    document.getElementById('loading').style.display='none';
+    renderCards(allResults);
+  }
+  function newSearch() {
+    const q=document.getElementById('search-input').value.trim();
+    if(!q) return;
+    window.location.href='results.html?q='+encodeURIComponent(q);
+  }
+  function doLogout() { localStorage.removeItem('comprAhorro_token'); window.location.href='index.html'; }
+  if(query) fetchResults(query);
+  else { document.getElementById('loading').style.display='none'; document.getElementById('empty-state').style.display='block'; }
+</script>
+</body>
+</html>

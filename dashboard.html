@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard - ComprAhorro</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .dash-hero { text-align: center; padding: 48px 20px 32px; }
+    .welcome-msg { font-size: 15px; color: var(--blue-mid); font-weight: 500; margin-bottom: 6px; }
+    .welcome-msg span { color: var(--blue-main); font-weight: 700; }
+    .dash-title { font-size: 26px; font-weight: 800; color: var(--blue-dark); margin-bottom: 22px; letter-spacing: -0.5px; }
+    .search-wrap { max-width: 540px; margin: 0 auto 12px; }
+    .search-hint { font-size: 12px; color: var(--gray-hint); text-align: center; font-style: italic; margin-top: 10px; }
+    .search-type { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .type-btn { display: flex; align-items: center; gap: 6px; padding: 9px 20px; border-radius: 24px; font-size: 13px; font-weight: 600; font-family: 'Poppins', sans-serif; cursor: pointer; border: 2px solid var(--blue-border); background: var(--white); color: var(--blue-mid); transition: all 0.2s; }
+    .type-btn.active, .type-btn:hover { background: var(--blue-main); color: var(--white); border-color: var(--blue-main); }
+    .quick-searches { max-width: 540px; margin: 0 auto 40px; padding: 0 20px; }
+    .quick-label { font-size: 11px; color: var(--gray-hint); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 10px; text-align: center; }
+    .quick-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .quick-tag { background: var(--white); border: 1px solid var(--blue-border); border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 500; color: var(--blue-mid); cursor: pointer; transition: all 0.2s; }
+    .quick-tag:hover { background: var(--blue-main); color: var(--white); border-color: var(--blue-main); }
+    .super-banner { max-width: 540px; margin: 0 auto 24px; background: #E1F5EE; border: 1px solid #9FE1CB; border-radius: var(--radius); padding: 12px 18px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: #0F6E56; font-weight: 500; }
+    .logout-btn { background: none; border: 1.5px solid var(--blue-border); color: var(--blue-mid); padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s; }
+    .logout-btn:hover { border-color: #E53E3E; color: #E53E3E; }
+  </style>
+</head>
+<body>
+<div class="page-wrapper">
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <img src="logo.jpeg" alt="ComprAhorro" class="nav-logo"/>
+      <span class="nav-name">Compr<span>Ahorro</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="active">Buscar</a>
+      <span style="font-size:13px;font-weight:600;color:var(--blue-dark);" id="user-name">🐷</span>
+      <button class="logout-btn" onclick="doLogout()">Salir</button>
+    </div>
+  </nav>
+  <main class="main-content">
+    <section class="dash-hero">
+      <p class="welcome-msg fade-in">Hola, <span id="greeting-name">usuario</span> 👋</p>
+      <h1 class="dash-title fade-in-2">Que buscamos hoy?</h1>
+      <div class="search-type fade-in-2">
+        <button class="type-btn active" id="btn-general" onclick="setType('general')">🔍 Busqueda general</button>
+        <button class="type-btn" id="btn-super" onclick="setType('super')">🛒 Supermercados</button>
+      </div>
+      <div class="super-banner fade-in" id="super-banner" style="display:none;">
+        🏪 <span>Modo supermercado — tendras acceso a tus listas, historial y favoritos.</span>
+      </div>
+      <div class="search-wrap fade-in-3">
+        <div class="search-bar">
+          <input type="text" id="search-input" placeholder="Que quieres ahorrar hoy?" onkeydown="if(event.key==='Enter')goSearch()"/>
+          <button onclick="goSearch()">BUSCAR</button>
+        </div>
+        <p class="search-hint">Escribe el producto y te mostramos donde cuesta menos.</p>
+      </div>
+      <div class="quick-searches fade-in-4">
+        <p class="quick-label" id="quick-label">Busquedas frecuentes</p>
+        <div class="quick-tags" id="quick-tags">
+          <span class="quick-tag" onclick="quickSearch(this)">Arroz</span>
+          <span class="quick-tag" onclick="quickSearch(this)">Aceite</span>
+          <span class="quick-tag" onclick="quickSearch(this)">Leche</span>
+          <span class="quick-tag" onclick="quickSearch(this)">Pollo</span>
+          <span class="quick-tag" onclick="quickSearch(this)">Pan</span>
+          <span class="quick-tag" onclick="quickSearch(this)">Jabon</span>
+          <span class="quick-tag" onclick="quickSearch(this)">Pasta</span>
+          <span class="quick-tag" onclick="quickSearch(this)">Atun</span>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">ComprAhorro 2026 · El Waze del Shopping</footer>
+</div>
+<script>
+  const token = localStorage.getItem('comprAhorro_token');
+  if (!token) window.location.href = 'login.html';
+  function parseJWT(t) { try { return JSON.parse(atob(t.split('.')[1])); } catch(e) { return {}; } }
+  const payload = parseJWT(token);
+  const name = (payload.name || payload.email || 'usuario').split(' ')[0];
+  document.getElementById('user-name').textContent = '🐷 ' + name;
+  document.getElementById('greeting-name').textContent = name;
+  let searchType = 'general';
+  function setType(type) {
+    searchType = type;
+    document.getElementById('btn-general').classList.toggle('active', type === 'general');
+    document.getElementById('btn-super').classList.toggle('active', type === 'super');
+    document.getElementById('super-banner').style.display = type === 'super' ? 'flex' : 'none';
+    const tags = type === 'super'
+      ? ['Super 99','El Rey','Riba Smith','Do it Center','Felipe Motta','Machetazo']
+      : ['Arroz','Aceite','Leche','Pollo','Pan','Jabon','Pasta','Atun'];
+    document.getElementById('quick-label').textContent = type === 'super' ? 'Supermercados populares' : 'Busquedas frecuentes';
+    document.getElementById('quick-tags').innerHTML = tags.map(t => `<span class="quick-tag" onclick="quickSearch(this)">${t}</span>`).join('');
+  }
+  function quickSearch(el) { document.getElementById('search-input').value = el.textContent; goSearch(); }
+  function goSearch() {
+    const q = document.getElementById('search-input').value.trim();
+    if (!q) { document.getElementById('search-input').focus(); return; }
+    window.location.href = (searchType === 'super' ? 'results_super.html' : 'results.html') + '?q=' + encodeURIComponent(q);
+  }
+  function doLogout() { localStorage.removeItem('comprAhorro_token'); window.location.href = 'index.html'; }
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('q')) document.getElementById('search-input').value = params.get('q');
+</script>
+</body>
+</html>
