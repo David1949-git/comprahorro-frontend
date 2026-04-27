@@ -124,7 +124,7 @@
     if (password !== password2) { showError('Las contrasenas no coinciden.'); return; }
     btn.textContent = 'Creando cuenta...'; btn.disabled = true;
     try {
-      const res = await fetch('https://comprahorro-backend.onrender.com/ahorros/register', {
+      const res = await fetch('https://comprahorro-backend-1.onrender.com/ahorros/register', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password })
       });
