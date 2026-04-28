@@ -85,7 +85,7 @@
     if (!email || !password) { showError('Por favor completa todos los campos.'); return; }
     btn.textContent = 'Verificando...'; btn.disabled = true;
     try {
-      const res = await fetch('https://comprahorro-backend-1.onrender.com/ahorros/login', {
+      const res = await fetch('https://comprahorro-backend-1.onrender.com//auth/login', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
