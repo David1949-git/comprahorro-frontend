@@ -3,105 +3,109 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard - ComprAhorro</title>
+  <title>Iniciar sesion - ComprAhorro</title>
   <link rel="stylesheet" href="styles.css"/>
   <style>
-    .dash-hero { text-align: center; padding: 48px 20px 32px; }
-    .welcome-msg { font-size: 15px; color: var(--blue-mid); font-weight: 500; margin-bottom: 6px; }
-    .welcome-msg span { color: var(--blue-main); font-weight: 700; }
-    .dash-title { font-size: 26px; font-weight: 800; color: var(--blue-dark); margin-bottom: 22px; letter-spacing: -0.5px; }
-    .search-wrap { max-width: 540px; margin: 0 auto 12px; }
-    .search-hint { font-size: 12px; color: var(--gray-hint); text-align: center; font-style: italic; margin-top: 10px; }
-    .search-type { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-    .type-btn { display: flex; align-items: center; gap: 6px; padding: 9px 20px; border-radius: 24px; font-size: 13px; font-weight: 600; font-family: 'Poppins', sans-serif; cursor: pointer; border: 2px solid var(--blue-border); background: var(--white); color: var(--blue-mid); transition: all 0.2s; }
-    .type-btn.active, .type-btn:hover { background: var(--blue-main); color: var(--white); border-color: var(--blue-main); }
-    .quick-searches { max-width: 540px; margin: 0 auto 40px; padding: 0 20px; }
-    .quick-label { font-size: 11px; color: var(--gray-hint); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 10px; text-align: center; }
-    .quick-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-    .quick-tag { background: var(--white); border: 1px solid var(--blue-border); border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 500; color: var(--blue-mid); cursor: pointer; transition: all 0.2s; }
-    .quick-tag:hover { background: var(--blue-main); color: var(--white); border-color: var(--blue-main); }
-    .super-banner { max-width: 540px; margin: 0 auto 24px; background: #E1F5EE; border: 1px solid #9FE1CB; border-radius: var(--radius); padding: 12px 18px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: #0F6E56; font-weight: 500; }
-    .logout-btn { background: none; border: 1.5px solid var(--blue-border); color: var(--blue-mid); padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s; }
-    .logout-btn:hover { border-color: #E53E3E; color: #E53E3E; }
+    body { background: var(--gray-bg); display: flex; flex-direction: column; min-height: 100vh; }
+    .auth-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 16px; }
+    .auth-card { width: 100%; max-width: 420px; }
+    .auth-header { text-align: center; margin-bottom: 28px; }
+    .auth-logo { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--blue-border); box-shadow: 0 0 0 5px var(--blue-light); margin-bottom: 14px; }
+    .auth-title { font-size: 22px; font-weight: 800; color: var(--blue-dark); margin-bottom: 4px; }
+    .auth-title span { color: var(--blue-main); }
+    .auth-sub { font-size: 13px; color: var(--gray-text); }
+    .divider { text-align: center; margin: 20px 0; font-size: 12px; color: var(--gray-hint); position: relative; }
+    .divider::before, .divider::after { content: ''; position: absolute; top: 50%; width: 42%; height: 1px; background: var(--blue-border); }
+    .divider::before { left: 0; } .divider::after { right: 0; }
+    .auth-footer { text-align: center; margin-top: 20px; font-size: 13px; color: var(--gray-text); }
+    .auth-footer a { color: var(--blue-main); font-weight: 600; text-decoration: none; }
+    .pass-wrap { position: relative; }
+    .pass-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 16px; color: var(--gray-hint); }
   </style>
 </head>
 <body>
-<div class="page-wrapper">
   <nav class="navbar">
     <a href="index.html" class="nav-brand">
       <img src="logo.jpeg" alt="ComprAhorro" class="nav-logo"/>
       <span class="nav-name">Compr<span>Ahorro</span></span>
     </a>
     <div class="nav-links">
-      <a href="dashboard.html" class="active">Buscar</a>
-      <span style="font-size:13px;font-weight:600;color:var(--blue-dark);" id="user-name">🐷</span>
-      <button class="logout-btn" onclick="doLogout()">Salir</button>
+      <a href="index.html">Inicio</a>
+      <a href="register.html" class="nav-btn outline">Registrarse</a>
     </div>
   </nav>
-  <main class="main-content">
-    <section class="dash-hero">
-      <p class="welcome-msg fade-in">Hola, <span id="greeting-name">usuario</span> 👋</p>
-      <h1 class="dash-title fade-in-2">Que buscamos hoy?</h1>
-      <div class="search-type fade-in-2">
-        <button class="type-btn active" id="btn-general" onclick="setType('general')">🔍 Busqueda general</button>
-        <button class="type-btn" id="btn-super" onclick="setType('super')">🛒 Supermercados</button>
+  <div class="auth-wrap">
+    <div class="auth-card fade-in">
+      <div class="auth-header">
+        <img src="logo.jpeg" alt="ComprAhorro" class="auth-logo"/>
+        <h1 class="auth-title">Compr<span>Ahorro</span></h1>
+        <p class="auth-sub">Ingresa a tu cuenta para comparar precios</p>
       </div>
-      <div class="super-banner fade-in" id="super-banner" style="display:none;">
-        🏪 <span>Modo supermercado — tendras acceso a tus listas, historial y favoritos.</span>
-      </div>
-      <div class="search-wrap fade-in-3">
-        <div class="search-bar">
-          <input type="text" id="search-input" placeholder="Que quieres ahorrar hoy?" onkeydown="if(event.key==='Enter')goSearch()"/>
-          <button onclick="goSearch()">BUSCAR</button>
+      <div class="card">
+        <div class="alert alert-error" id="error-msg"></div>
+        <div class="alert alert-success" id="success-msg"></div>
+        <div class="form-group">
+          <label class="form-label" for="email">Correo electronico</label>
+          <input class="form-input" type="email" id="email" placeholder="tu@correo.com"/>
         </div>
-        <p class="search-hint">Escribe el producto y te mostramos donde cuesta menos.</p>
-      </div>
-      <div class="quick-searches fade-in-4">
-        <p class="quick-label" id="quick-label">Busquedas frecuentes</p>
-        <div class="quick-tags" id="quick-tags">
-          <span class="quick-tag" onclick="quickSearch(this)">Arroz</span>
-          <span class="quick-tag" onclick="quickSearch(this)">Aceite</span>
-          <span class="quick-tag" onclick="quickSearch(this)">Leche</span>
-          <span class="quick-tag" onclick="quickSearch(this)">Pollo</span>
-          <span class="quick-tag" onclick="quickSearch(this)">Pan</span>
-          <span class="quick-tag" onclick="quickSearch(this)">Jabon</span>
-          <span class="quick-tag" onclick="quickSearch(this)">Pasta</span>
-          <span class="quick-tag" onclick="quickSearch(this)">Atun</span>
+        <div class="form-group">
+          <label class="form-label" for="password">Contrasena</label>
+          <div class="pass-wrap">
+            <input class="form-input" type="password" id="password" placeholder="Tu contrasena" onkeydown="if(event.key==='Enter')doLogin()"/>
+            <button class="pass-toggle" onclick="togglePass()" type="button">👁</button>
+          </div>
         </div>
+        <button class="btn btn-primary" onclick="doLogin()" id="login-btn">Iniciar sesion</button>
+        <div class="divider">o</div>
+        <a href="register.html" class="btn btn-outline" style="width:100%;text-align:center;">Crear cuenta nueva</a>
       </div>
-    </section>
-  </main>
-  <footer class="footer">ComprAhorro 2026 · El Waze del Shopping</footer>
-</div>
+      <div class="auth-footer">No tienes cuenta? <a href="register.html">Registrate gratis</a></div>
+    </div>
+  </div>
+  <footer class="footer">ComprAhorro 2026</footer>
 <script>
-  const token = localStorage.getItem('comprAhorro_token');
-  if (!token) window.location.href = 'login.html';
-  function parseJWT(t) { try { return JSON.parse(atob(t.split('.')[1])); } catch(e) { return {}; } }
-  const payload = parseJWT(token);
-  const name = (payload.name || payload.email || 'usuario').split(' ')[0];
-  document.getElementById('user-name').textContent = '🐷 ' + name;
-  document.getElementById('greeting-name').textContent = name;
-  let searchType = 'general';
-  function setType(type) {
-    searchType = type;
-    document.getElementById('btn-general').classList.toggle('active', type === 'general');
-    document.getElementById('btn-super').classList.toggle('active', type === 'super');
-    document.getElementById('super-banner').style.display = type === 'super' ? 'flex' : 'none';
-    const tags = type === 'super'
-      ? ['Super 99','El Rey','Riba Smith','Do it Center','Felipe Motta','Machetazo']
-      : ['Arroz','Aceite','Leche','Pollo','Pan','Jabon','Pasta','Atun'];
-    document.getElementById('quick-label').textContent = type === 'super' ? 'Supermercados populares' : 'Busquedas frecuentes';
-    document.getElementById('quick-tags').innerHTML = tags.map(t => `<span class="quick-tag" onclick="quickSearch(this)">${t}</span>`).join('');
+  function togglePass() {
+    const i = document.getElementById('password');
+    i.type = i.type === 'password' ? 'text' : 'password';
   }
-  function quickSearch(el) { document.getElementById('search-input').value = el.textContent; goSearch(); }
-  function goSearch() {
-    const q = document.getElementById('search-input').value.trim();
-    if (!q) { document.getElementById('search-input').focus(); return; }
-    window.location.href = (searchType === 'super' ? 'results_super.html' : 'results.html') + '?q=' + encodeURIComponent(q);
+  function showError(msg) {
+    const e = document.getElementById('error-msg');
+    e.textContent = msg; e.classList.add('show');
+    document.getElementById('success-msg').classList.remove('show');
   }
-  function doLogout() { localStorage.removeItem('comprAhorro_token'); window.location.href = 'index.html'; }
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('q')) document.getElementById('search-input').value = params.get('q');
+  function showSuccess(msg) {
+    const e = document.getElementById('success-msg');
+    e.textContent = msg; e.classList.add('show');
+    document.getElementById('error-msg').classList.remove('show');
+  }
+  async function doLogin() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const btn = document.getElementById('login-btn');
+    if (!email || !password) { showError('Por favor completa todos los campos.'); return; }
+    btn.textContent = 'Verificando...'; btn.disabled = true;
+    try {
+      const res = await fetch('https://comprahorro-backend-1.onrender.com/auth/login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (res.ok && (data.access_token || data.token)) {
+        localStorage.setItem('comprAhorro_token', data.access_token || data.token);
+        showSuccess('Bienvenido! Redirigiendo...');
+        const params = new URLSearchParams(window.location.search);
+        const q = params.get('q') || '';
+        setTimeout(() => { window.location.href = 'dashboard.html' + (q ? '?q=' + encodeURIComponent(q) : ''); }, 800);
+      } else {
+        showError(data.message || 'Credenciales incorrectas.');
+        btn.textContent = 'Iniciar sesion'; btn.disabled = false;
+      }
+    } catch(e) {
+      showError('Error de conexion. Verifica tu internet.');
+      btn.textContent = 'Iniciar sesion'; btn.disabled = false;
+    }
+  }
+  if (localStorage.getItem('comprAhorro_token')) window.location.href = 'dashboard.html';
 </script>
 </body>
 </html>
