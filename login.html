@@ -90,8 +90,8 @@
         body: JSON.stringify({ email, password })
       });
       const data = await res.json();
-      if (res.ok && data.access_token) {
-        localStorage.setItem('comprAhorro_token', data.access_token);
+      if (res.ok && data.token) {
+        localStorage.setItem('comprAhorro_token', data.token);
         showSuccess('Bienvenido! Redirigiendo...');
         const params = new URLSearchParams(window.location.search);
         const q = params.get('q') || '';
