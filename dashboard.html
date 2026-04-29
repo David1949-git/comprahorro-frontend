@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard - ComprAhorro</title>
+  <title>ComprAhorro — Compara, elige y ahorra</title>
   <link rel="stylesheet" href="styles.css"/>
   <style>
-    .dashboard-wrap { max-width: 680px; margin: 0 auto; padding: 40px 20px; text-align: center; }
-    .dash-greeting { font-size: 22px; font-weight: 800; color: var(--blue-dark); margin-bottom: 6px; }
-    .dash-greeting span { color: var(--blue-main); }
-    .dash-sub { font-size: 14px; color: var(--gray-text); margin-bottom: 32px; }
-    .dash-search { max-width: 480px; margin: 0 auto 36px; }
-    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; max-width: 680px; margin: 0 auto; }
+    .hero { text-align: center; padding: 52px 20px 40px; }
+    .tagline { font-size: 19px; font-weight: 700; color: var(--blue-dark); margin: 0 0 8px; }
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; max-width: 680px; margin: 40px auto 0; padding: 0 20px; }
     .feat-card { background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--blue-border); padding: 20px; text-align: center; transition: transform 0.2s, box-shadow 0.2s; }
     .feat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
     .feat-icon { font-size: 28px; margin-bottom: 8px; }
     .feat-title { font-size: 13px; font-weight: 700; color: var(--blue-dark); margin-bottom: 4px; }
     .feat-desc { font-size: 12px; color: var(--gray-text); }
-    .logout-btn { background: none; border: 1.5px solid var(--blue-border); color: var(--blue-mid); padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s; }
-    .logout-btn:hover { border-color: #E53E3E; color: #E53E3E; }
+    .coming-soon { text-align: center; padding: 40px 20px; }
+    .coming-soon p { font-size: 11px; color: var(--gray-hint); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px; }
+    .coming-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .coming-btn { background: var(--white); color: var(--blue-mid); border: 1.5px solid var(--blue-border); border-radius: 8px; padding: 10px 22px; font-size: 13px; font-weight: 600; font-family: 'Poppins', sans-serif; opacity: 0.5; cursor: default; }
+    .coming-btn small { display: block; font-size: 10px; font-weight: 400; color: var(--gray-hint); margin-top: 2px; }
   </style>
 </head>
 <body>
@@ -29,64 +29,41 @@
       <span class="nav-name">Compr<span>Ahorro</span></span>
     </a>
     <div class="nav-links">
-      <span style="font-size:13px;font-weight:600;color:var(--blue-dark);" id="user-name">🐷</span>
-      <button class="logout-btn" onclick="doLogout()">Salir</button>
+      <a href="index.html" class="active">Inicio</a>
+      <a href="#acerca">Acerca</a>
+      <a href="login.html" class="nav-btn">Iniciar sesion</a>
     </div>
   </nav>
   <main class="main-content">
-    <div class="dashboard-wrap">
+    <section class="hero">
       <div class="logo-aura fade-in">
         <img src="logo.jpeg" alt="ComprAhorro"/>
       </div>
-      <h1 class="dash-greeting fade-in-2">Hola, <span id="user-first">usuario</span>! 👋</h1>
-      <p class="dash-sub fade-in-2">Que quieres comparar hoy?</p>
-      <div class="dash-search fade-in-3">
-        <div class="search-bar">
-          <input type="text" id="search-input" placeholder="Busca un producto..." onkeydown="if(event.key==='Enter')goSearch()"/>
-          <button onclick="goSearch()">BUSCAR</button>
-        </div>
+      <h1 class="nav-name fade-in-2" style="font-size:34px;margin-bottom:8px;">Compr<span>Ahorro</span></h1>
+      <div class="badge fade-in-2" style="margin-bottom:14px;">Todo en un solo lugar</div>
+      <p class="tagline fade-in-3">Nosotros buscamos, tu ahorras!</p>
+      <div class="steps fade-in-3">
+        <div class="step"><div class="step-num">1. COMPARA</div><div class="step-sub">Precios reales</div></div>
+        <div class="step"><div class="step-num">2. ELIGE</div><div class="step-sub">Sin presiones</div></div>
+        <div class="step"><div class="step-num">3. COMPRA</div><div class="step-sub">Directo al grano</div></div>
       </div>
-      <div class="features fade-in-4">
-        <div class="feat-card">
-          <div class="feat-icon">💰</div>
-          <div class="feat-title">Mejores precios</div>
-          <div class="feat-desc">Comparamos tiendas en tiempo real</div>
-        </div>
-        <div class="feat-card">
-          <div class="feat-icon">🤖</div>
-          <div class="feat-title">Asistido por IA</div>
-          <div class="feat-desc">Resultados inteligentes con Groq</div>
-        </div>
-        <div class="feat-card">
-          <div class="feat-icon">📍</div>
-          <div class="feat-title">Tiendas locales</div>
-          <div class="feat-desc">Negocios cerca de ti en Panama</div>
-        </div>
+      <div class="search-bar fade-in-4" style="max-width:480px;margin:0 auto;">
+        <input type="text" id="search-input" placeholder="Que quieres ahorrar hoy?" onkeydown="handleSearch(event)"/>
+        <button onclick="goSearch()">BUSCAR</button>
       </div>
-    </div>
+    </section>
   </main>
-  <footer class="footer">ComprAhorro · Compara, elige y ahorra 🐷</footer>
+  <footer class="footer" id="acerca">ComprAhorro · Compara, elige y ahorra 🐷</footer>
 </div>
 <script>
-  const token = localStorage.getItem('comprAhorro_token');
-  if (!token) window.location.href = 'login.html';
-  function parseJWT(t) { try { return JSON.parse(atob(t.split('.')[1])); } catch(e) { return {}; } }
-  const payload = parseJWT(token);
-  const firstName = (payload.name || payload.email || 'usuario').split(' ')[0];
-  document.getElementById('user-name').textContent = '🐷 ' + firstName;
-  document.getElementById('user-first').textContent = firstName;
-  const params = new URLSearchParams(window.location.search);
-  const q = params.get('q') || '';
-  if (q) {
-    document.getElementById('search-input').value = q;
-    window.location.href = 'results.html?q=' + encodeURIComponent(q);
-  }
+  function handleSearch(e) { if (e.key === 'Enter') goSearch(); }
   function goSearch() {
     const q = document.getElementById('search-input').value.trim();
     if (!q) return;
-    window.location.href = 'results.html?q=' + encodeURIComponent(q);
+    const token = localStorage.getItem('comprAhorro_token');
+    if (!token) { window.location.href = 'login.html?q=' + encodeURIComponent(q); return; }
+    window.location.href = 'dashboard.html?q=' + encodeURIComponent(q);
   }
-  function doLogout() { localStorage.removeItem('comprAhorro_token'); window.location.href = 'index.html'; }
 </script>
 </body>
 </html>
