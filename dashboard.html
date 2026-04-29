@@ -3,109 +3,90 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Iniciar sesion - ComprAhorro</title>
+  <title>Dashboard - ComprAhorro</title>
   <link rel="stylesheet" href="styles.css"/>
   <style>
-    body { background: var(--gray-bg); display: flex; flex-direction: column; min-height: 100vh; }
-    .auth-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 16px; }
-    .auth-card { width: 100%; max-width: 420px; }
-    .auth-header { text-align: center; margin-bottom: 28px; }
-    .auth-logo { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--blue-border); box-shadow: 0 0 0 5px var(--blue-light); margin-bottom: 14px; }
-    .auth-title { font-size: 22px; font-weight: 800; color: var(--blue-dark); margin-bottom: 4px; }
-    .auth-title span { color: var(--blue-main); }
-    .auth-sub { font-size: 13px; color: var(--gray-text); }
-    .divider { text-align: center; margin: 20px 0; font-size: 12px; color: var(--gray-hint); position: relative; }
-    .divider::before, .divider::after { content: ''; position: absolute; top: 50%; width: 42%; height: 1px; background: var(--blue-border); }
-    .divider::before { left: 0; } .divider::after { right: 0; }
-    .auth-footer { text-align: center; margin-top: 20px; font-size: 13px; color: var(--gray-text); }
-    .auth-footer a { color: var(--blue-main); font-weight: 600; text-decoration: none; }
-    .pass-wrap { position: relative; }
-    .pass-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 16px; color: var(--gray-hint); }
+    .dashboard-wrap { max-width: 680px; margin: 0 auto; padding: 40px 20px; text-align: center; }
+    .dash-greeting { font-size: 22px; font-weight: 800; color: var(--blue-dark); margin-bottom: 6px; }
+    .dash-greeting span { color: var(--blue-main); }
+    .dash-sub { font-size: 14px; color: var(--gray-text); margin-bottom: 32px; }
+    .dash-search { max-width: 480px; margin: 0 auto 36px; }
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; max-width: 680px; margin: 0 auto; }
+    .feat-card { background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--blue-border); padding: 20px; text-align: center; transition: transform 0.2s, box-shadow 0.2s; }
+    .feat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .feat-icon { font-size: 28px; margin-bottom: 8px; }
+    .feat-title { font-size: 13px; font-weight: 700; color: var(--blue-dark); margin-bottom: 4px; }
+    .feat-desc { font-size: 12px; color: var(--gray-text); }
+    .logout-btn { background: none; border: 1.5px solid var(--blue-border); color: var(--blue-mid); padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s; }
+    .logout-btn:hover { border-color: #E53E3E; color: #E53E3E; }
   </style>
 </head>
 <body>
+<div class="page-wrapper">
   <nav class="navbar">
     <a href="index.html" class="nav-brand">
       <img src="logo.jpeg" alt="ComprAhorro" class="nav-logo"/>
       <span class="nav-name">Compr<span>Ahorro</span></span>
     </a>
     <div class="nav-links">
-      <a href="index.html">Inicio</a>
-      <a href="register.html" class="nav-btn outline">Registrarse</a>
+      <span style="font-size:13px;font-weight:600;color:var(--blue-dark);" id="user-name">🐷</span>
+      <button class="logout-btn" onclick="doLogout()">Salir</button>
     </div>
   </nav>
-  <div class="auth-wrap">
-    <div class="auth-card fade-in">
-      <div class="auth-header">
-        <img src="logo.jpeg" alt="ComprAhorro" class="auth-logo"/>
-        <h1 class="auth-title">Compr<span>Ahorro</span></h1>
-        <p class="auth-sub">Ingresa a tu cuenta para comparar precios</p>
+  <main class="main-content">
+    <div class="dashboard-wrap">
+      <div class="logo-aura fade-in">
+        <img src="logo.jpeg" alt="ComprAhorro"/>
       </div>
-      <div class="card">
-        <div class="alert alert-error" id="error-msg"></div>
-        <div class="alert alert-success" id="success-msg"></div>
-        <div class="form-group">
-          <label class="form-label" for="email">Correo electronico</label>
-          <input class="form-input" type="email" id="email" placeholder="tu@correo.com"/>
+      <h1 class="dash-greeting fade-in-2">Hola, <span id="user-first">usuario</span>! 👋</h1>
+      <p class="dash-sub fade-in-2">Que quieres comparar hoy?</p>
+      <div class="dash-search fade-in-3">
+        <div class="search-bar">
+          <input type="text" id="search-input" placeholder="Busca un producto..." onkeydown="if(event.key==='Enter')goSearch()"/>
+          <button onclick="goSearch()">BUSCAR</button>
         </div>
-        <div class="form-group">
-          <label class="form-label" for="password">Contrasena</label>
-          <div class="pass-wrap">
-            <input class="form-input" type="password" id="password" placeholder="Tu contrasena" onkeydown="if(event.key==='Enter')doLogin()"/>
-            <button class="pass-toggle" onclick="togglePass()" type="button">👁</button>
-          </div>
-        </div>
-        <button class="btn btn-primary" onclick="doLogin()" id="login-btn">Iniciar sesion</button>
-        <div class="divider">o</div>
-        <a href="register.html" class="btn btn-outline" style="width:100%;text-align:center;">Crear cuenta nueva</a>
       </div>
-      <div class="auth-footer">No tienes cuenta? <a href="register.html">Registrate gratis</a></div>
+      <div class="features fade-in-4">
+        <div class="feat-card">
+          <div class="feat-icon">💰</div>
+          <div class="feat-title">Mejores precios</div>
+          <div class="feat-desc">Comparamos tiendas en tiempo real</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🤖</div>
+          <div class="feat-title">Asistido por IA</div>
+          <div class="feat-desc">Resultados inteligentes con Groq</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">📍</div>
+          <div class="feat-title">Tiendas locales</div>
+          <div class="feat-desc">Negocios cerca de ti en Panama</div>
+        </div>
+      </div>
     </div>
-  </div>
-  <footer class="footer">ComprAhorro 2026</footer>
+  </main>
+  <footer class="footer">ComprAhorro · Compara, elige y ahorra 🐷</footer>
+</div>
 <script>
-  function togglePass() {
-    const i = document.getElementById('password');
-    i.type = i.type === 'password' ? 'text' : 'password';
+  const token = localStorage.getItem('comprAhorro_token');
+  if (!token) window.location.href = 'login.html';
+  function parseJWT(t) { try { return JSON.parse(atob(t.split('.')[1])); } catch(e) { return {}; } }
+  const payload = parseJWT(token);
+  const firstName = (payload.name || payload.email || 'usuario').split(' ')[0];
+  document.getElementById('user-name').textContent = '🐷 ' + firstName;
+  document.getElementById('user-first').textContent = firstName;
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get('q') || '';
+  if (q) {
+    document.getElementById('search-input').value = q;
+    window.location.href = 'results.html?q=' + encodeURIComponent(q);
   }
-  function showError(msg) {
-    const e = document.getElementById('error-msg');
-    e.textContent = msg; e.classList.add('show');
-    document.getElementById('success-msg').classList.remove('show');
+  function goSearch() {
+    const q = document.getElementById('search-input').value.trim();
+    if (!q) return;
+    window.location.href = 'results.html?q=' + encodeURIComponent(q);
   }
-  function showSuccess(msg) {
-    const e = document.getElementById('success-msg');
-    e.textContent = msg; e.classList.add('show');
-    document.getElementById('error-msg').classList.remove('show');
-  }
-  async function doLogin() {
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const btn = document.getElementById('login-btn');
-    if (!email || !password) { showError('Por favor completa todos los campos.'); return; }
-    btn.textContent = 'Verificando...'; btn.disabled = true;
-    try {
-      const res = await fetch('https://comprahorro-backend-1.onrender.com/auth/login', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-      if (res.ok && (data.access_token || data.token)) {
-        localStorage.setItem('comprAhorro_token', data.access_token || data.token);
-        showSuccess('Bienvenido! Redirigiendo...');
-        const params = new URLSearchParams(window.location.search);
-        const q = params.get('q') || '';
-        setTimeout(() => { window.location.href = 'dashboard.html' + (q ? '?q=' + encodeURIComponent(q) : ''); }, 800);
-      } else {
-        showError(data.message || 'Credenciales incorrectas.');
-        btn.textContent = 'Iniciar sesion'; btn.disabled = false;
-      }
-    } catch(e) {
-      showError('Error de conexion. Verifica tu internet.');
-      btn.textContent = 'Iniciar sesion'; btn.disabled = false;
-    }
-  }
-  if (localStorage.getItem('comprAhorro_token')) window.location.href = 'dashboard.html';
+  function doLogout() { localStorage.removeItem('comprAhorro_token'); window.location.href = 'index.html'; }
 </script>
 </body>
 </html>
