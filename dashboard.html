@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ComprAhorro — Compara, elige y ahorra</title>
+  <title>Dashboard - ComprAhorro</title>
   <link rel="stylesheet" href="styles.css"/>
   <style>
     .hero { text-align: center; padding: 52px 20px 40px; }
@@ -14,24 +14,20 @@
     .feat-icon { font-size: 28px; margin-bottom: 8px; }
     .feat-title { font-size: 13px; font-weight: 700; color: var(--blue-dark); margin-bottom: 4px; }
     .feat-desc { font-size: 12px; color: var(--gray-text); }
-    .coming-soon { text-align: center; padding: 40px 20px; }
-    .coming-soon p { font-size: 11px; color: var(--gray-hint); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px; }
-    .coming-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-    .coming-btn { background: var(--white); color: var(--blue-mid); border: 1.5px solid var(--blue-border); border-radius: 8px; padding: 10px 22px; font-size: 13px; font-weight: 600; font-family: 'Poppins', sans-serif; opacity: 0.5; cursor: default; }
-    .coming-btn small { display: block; font-size: 10px; font-weight: 400; color: var(--gray-hint); margin-top: 2px; }
+    .logout-btn { background: none; border: 1.5px solid var(--blue-border); color: var(--blue-mid); padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s; }
+    .logout-btn:hover { border-color: #E53E3E; color: #E53E3E; }
   </style>
 </head>
 <body>
 <div class="page-wrapper">
   <nav class="navbar">
-    <a href="index.html" class="nav-brand">
+    <a href="dashboard.html" class="nav-brand">
       <img src="logo.jpeg" alt="ComprAhorro" class="nav-logo"/>
       <span class="nav-name">Compr<span>Ahorro</span></span>
     </a>
     <div class="nav-links">
-      <a href="index.html" class="active">Inicio</a>
-      <a href="#acerca">Acerca</a>
-      <a href="login.html" class="nav-btn">Iniciar sesion</a>
+      <span style="font-size:13px;font-weight:600;color:var(--blue-dark);" id="user-name">🐷</span>
+      <button class="logout-btn" onclick="doLogout()">Salir</button>
     </div>
   </nav>
   <main class="main-content">
@@ -53,16 +49,27 @@
       </div>
     </section>
   </main>
-  <footer class="footer" id="acerca">ComprAhorro · Compara, elige y ahorra 🐷</footer>
+  <footer class="footer">ComprAhorro · Compara, elige y ahorra 🐷</footer>
 </div>
 <script>
+  const token = localStorage.getItem('comprAhorro_token');
+  if (!token) window.location.href = 'login.html';
+  function parseJWT(t) { try { return JSON.parse(atob(t.split('.')[1])); } catch(e) { return {}; } }
+  const payload = parseJWT(token);
+  const userName = (payload.name || payload.email || 'usuario').split(' ')[0];
+  document.getElementById('user-name').textContent = '🐷 ' + userName;
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get('q') || '';
+  if (q) window.location.href = 'results.html?q=' + encodeURIComponent(q);
   function handleSearch(e) { if (e.key === 'Enter') goSearch(); }
   function goSearch() {
     const q = document.getElementById('search-input').value.trim();
     if (!q) return;
-    const token = localStorage.getItem('comprAhorro_token');
-    if (!token) { window.location.href = 'login.html?q=' + encodeURIComponent(q); return; }
-    window.location.href = 'dashboard.html?q=' + encodeURIComponent(q);
+    window.location.href = 'results.html?q=' + encodeURIComponent(q);
+  }
+  function doLogout() {
+    localStorage.removeItem('comprAhorro_token');
+    window.location.href = 'index.html';
   }
 </script>
 </body>
