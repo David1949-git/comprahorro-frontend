@@ -8,7 +8,7 @@
   <style>
     .hero { text-align: center; padding: 52px 20px 40px; }
     .tagline { font-size: 19px; font-weight: 700; color: var(--blue-dark); margin: 0 0 8px; }
-    .logout-btn { background: none; border: 1.5px solid var(--blue-border); color: var(--blue-mid); padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s; }
+    .logout-btn { background: none; border: 1.5px solid var(--blue-border); color: var(--blue-mid); padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: Poppins,sans-serif; transition: all 0.2s; }
     .logout-btn:hover { border-color: #E53E3E; color: #E53E3E; }
   </style>
 </head>
@@ -46,24 +46,24 @@
   <footer class="footer">ComprAhorro · Compara, elige y ahorra 🐷</footer>
 </div>
 <script>
-  const token = localStorage.getItem('comprAhorro_token');
-  if (!token) window.location.href = 'login.html';
-  function parseJWT(t) { try { return JSON.parse(atob(t.split('.')[1])); } catch(e) { return {}; } }
+  const token = localStorage.getItem("comprAhorro_token");
+  if (!token) window.location.href = "login.html";
+  function parseJWT(t) { try { return JSON.parse(atob(t.split(".")[1])); } catch(e) { return {}; } }
   const payload = parseJWT(token);
-  const userName = (payload.name || payload.email || 'usuario').split(' ')[0];
-  document.getElementById('user-name').textContent = '🐷 ' + userName;
+  const userName = (payload.name || payload.email || "usuario").split(" ")[0];
+  document.getElementById("user-name").textContent = "🐷 " + userName;
   const params = new URLSearchParams(window.location.search);
-  const q = params.get('q') || '';
-  if (q) window.location.href = 'results.html?q=' + encodeURIComponent(q);
-  function handleSearch(e) { if (e.key === 'Enter') goSearch(); }
+  const q = params.get("q") || "";
+  if (q) window.location.href = "results.html?q=" + encodeURIComponent(q);
+  function handleSearch(e) { if (e.key === "Enter") goSearch(); }
   function goSearch() {
-    const q = document.getElementById('search-input').value.trim();
+    const q = document.getElementById("search-input").value.trim();
     if (!q) return;
-    window.location.href = 'results.html?q=' + encodeURIComponent(q);
+    window.location.href = "results.html?q=" + encodeURIComponent(q);
   }
   function doLogout() {
-    localStorage.removeItem('comprAhorro_token');
-    window.location.href = 'index.html';
+    localStorage.removeItem("comprAhorro_token");
+    window.location.href = "index.html";
   }
 </script>
 </body>
