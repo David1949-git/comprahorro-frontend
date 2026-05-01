@@ -1,0 +1,1 @@
+const fs=require('fs');let c=fs.readFileSync('src/components/PiggyLogo.tsx','utf8');c=c.replace('rounded-full bg-gradient-to-br from-emerald-100/40 to-transparent backdrop-blur-sm','');fs.writeFileSync('src/components/PiggyLogo.tsx',c,'utf8');console.log('OK');
