@@ -2,8 +2,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const boton = document.getElementById('btnBuscar');
     const input = document.getElementById('prodInput');
     const lista = document.getElementById('lista-ahorros');
+    const API_BASE_URL = (window.__API_BASE_URL__ || 'https://comprahorro-backend-1.onrender.com').replace(/\/+$/, '');
     const API_LOCAL  = 'http://localhost:10000/ahorros/buscar';
-    const API_RENDER = 'http://localhost:10000/ahorros/buscar';
+    const API_RENDER = API_BASE_URL + '/ahorros/buscar';
+
+    function normalizeAhorrosResponse(data) {
+        if (Array.isArray(data)) return { resultados: data };
+        if (Array.isArray(data?.resultados)) return { resultados: data.resultados };
+        if (Array.isArray(data?.results)) return { resultados: data.results };
+        return { resultados: [] };
+    }
 
     function mostrarSpinner(termino) {
         lista.innerHTML = '<div class="p-8 text-center text-gray-500"><div class="inline-block w-6 h-6 border-4 border-gray-200 border-t-black rounded-full animate-spin mb-3"></div><p class="text-sm">Buscando en Panamá: <b>' + termino + '</b>...</p></div>';
@@ -104,11 +112,21 @@ document.addEventListener('DOMContentLoaded', () => {
         mostrarSpinner(termino);
         try {
             const res = await fetch(API_LOCAL + '?q=' + encodeURIComponent(termino) + (lat ? '&lat=' + lat + '&lon=' + lon : ''), { signal: AbortSignal.timeout(30000) });
-            if (res.ok) { const data = await res.json(); mostrarResultados(data.resultados, termino); return; }
+            if (res.ok) {
+                const data = await res.json();
+                const normalized = normalizeAhorrosResponse(data);
+                mostrarResultados(normalized.resultados, termino);
+                return;
+            }
         } catch (e) { console.warn('Local no disponible', e.message); }
         try {
             const res = await fetch(API_RENDER + '?q=' + encodeURIComponent(termino) + (lat ? '&lat=' + lat + '&lon=' + lon : ''), { signal: AbortSignal.timeout(30000) });
-            if (res.ok) { const data = await res.json(); mostrarResultados(data.resultados, termino); return; }
+            if (res.ok) {
+                const data = await res.json();
+                const normalized = normalizeAhorrosResponse(data);
+                mostrarResultados(normalized.resultados, termino);
+                return;
+            }
             mostrarError('El servidor respondio con error.');
         } catch (e) { mostrarError('No hay conexion con el servidor local ni con la nube.'); }
     }

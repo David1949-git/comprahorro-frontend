@@ -1,10 +1,21 @@
 import { useState } from 'react';
+import { getAhorrosApiUrl } from '@/lib/api';
+
+type Factura = {
+  precioBase: number;
+  impuestos: number;
+  delivery: number;
+  servicioPrestado: number;
+  totalFinal: number;
+};
 
 export default function App() {
   const [termino, setTermino] = useState('');
   const [resultados, setResultados] = useState<any[]>([]);
   const [veredicto, setVeredicto] = useState('');
   const [cargando, setCargando] = useState(false);
+  const [factura, setFactura] = useState<Factura | null>(null);
+  const [itemSeleccionado, setItemSeleccionado] = useState<any>(null);
 
   const buscar = async () => {
     if (!termino.trim()) return;
@@ -16,7 +27,7 @@ export default function App() {
     const timeoutId = setTimeout(() => controller.abort(), 35000);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'https://comprahorro-backend-1.onrender.com/ahorros';
+      const apiUrl = getAhorrosApiUrl();
       
       const respuesta = await fetch(`${apiUrl}/buscar?q=${encodeURIComponent(termino)}`, { 
         method: 'GET', 
@@ -47,6 +58,25 @@ export default function App() {
     }
   };
 
+  const generarFactura = async (item: any) => {
+    if (!item?.precioFinal) return;
+    const apiUrl = getAhorrosApiUrl();
+    const precioBase = item.precioFinal.toString().replace(/[^0-9.]/g, '') || '0';
+    setCargando(true);
+    try {
+      const respuesta = await fetch(`${apiUrl}/factura?precioBase=${encodeURIComponent(precioBase)}`);
+      if (!respuesta.ok) throw new Error('No se pudo generar la factura');
+      const facturaData = await respuesta.json();
+      setFactura(facturaData);
+      setItemSeleccionado(item);
+    } catch (error) {
+      console.error(error);
+      setVeredicto('No se pudo generar la factura. Intenta de nuevo.');
+    } finally {
+      setCargando(false);
+    }
+  };
+
   const tieneResultados = resultados.length > 0 || veredicto !== '';
 
   return (
@@ -73,7 +103,7 @@ export default function App() {
               </div>
               <div className="flex flex-col items-center">
                 <span className="text-emerald-500 text-lg">3. COMPRA</span>
-                <p className="font-medium text-gray-400">Directo al grano</p>
+                <p className="font-medium text-gray-400">Directo sin intermediarios</p>
               </div>
             </div>
           </div>
@@ -97,6 +127,51 @@ export default function App() {
 
       {/* RESULTADOS */}
       <div className="w-full max-w-4xl pb-20 mt-10">
+        {factura && itemSeleccionado && (
+          <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 mb-8">
+            <h2 className="text-xl font-bold text-slate-900 mb-4">Recibo de compra</h2>
+            <p className="text-sm text-slate-500 mb-4">Comercio seleccionado: <strong>{itemSeleccionado.tienda}</strong></p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700">
+              <div className="flex justify-between border-b border-slate-100 pb-2">
+                <span>Costo base</span>
+                <span>${factura.precioBase.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between border-b border-slate-100 pb-2">
+                <span>Impuestos</span>
+                <span>${factura.impuestos.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between border-b border-slate-100 pb-2">
+                <span>Servicio de delivery</span>
+                <span>${factura.delivery.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between border-b border-slate-100 pb-2">
+                <span>Servicio prestado</span>
+                <span>${factura.servicioPrestado.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between pt-4 text-base font-bold text-slate-900">
+                <span>Total</span>
+                <span>${factura.totalFinal.toFixed(2)}</span>
+              </div>
+            </div>
+            <div className="mt-6 flex flex-col md:flex-row gap-3">
+              <a
+                href={itemSeleccionado.affiliateUrl || itemSeleccionado.link}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                className="bg-emerald-600 text-white px-6 py-3 rounded-2xl font-semibold text-center hover:bg-emerald-700 transition"
+              >
+                Comprar en tienda
+              </a>
+              <button
+                type="button"
+                onClick={() => setFactura(null)}
+                className="border border-slate-300 text-slate-700 px-6 py-3 rounded-2xl hover:bg-slate-50 transition"
+              >
+                Cerrar recibo
+              </button>
+            </div>
+          </div>
+        )}
         {veredicto && (
           <div className="bg-white p-6 mb-8 rounded-3xl shadow-sm border-l-8 border-emerald-500 flex items-center">
             <span className="text-3xl mr-4">💡</span>
@@ -119,9 +194,28 @@ export default function App() {
                   <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full mb-2 inline-block">{item.tienda}</span>
                   <h3 className="font-bold text-slate-900 text-xl leading-tight">{item.producto}</h3>
                 </div>
-                <div className="flex items-center justify-between mt-4">
-                  <span className="text-3xl font-black text-emerald-600">{item.precioFinal || 'Ver precio'}</span>
-                  <a href={item.link} target="_blank" rel="noopener noreferrer" className="bg-[#0a192f] text-white px-6 py-2 rounded-xl font-bold text-sm">VER TIENDA</a>
+                <div className="flex flex-col gap-3 mt-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-3xl font-black text-emerald-600">{item.precioFinal || 'Ver precio'}</span>
+                    <span className="text-sm text-slate-500">{item.disponibilidad || 'Disponible'}</span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <button
+                      type="button"
+                      onClick={() => generarFactura(item)}
+                      className="w-full sm:w-auto bg-emerald-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-emerald-700 transition"
+                    >
+                      Mostrar factura
+                    </button>
+                    <a
+                      href={item.affiliateUrl || item.link}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      className="w-full sm:w-auto bg-[#0a192f] text-white px-6 py-3 rounded-2xl font-bold text-center hover:bg-slate-800 transition"
+                    >
+                      Comprar
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>

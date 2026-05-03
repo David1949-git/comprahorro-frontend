@@ -22,6 +22,8 @@ interface Deal {
   storeLogo?: string;
 }
 
+import { getAhorrosApiUrl } from '@/lib/api';
+
 const FeaturedDeals = () => {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,8 +33,8 @@ const FeaturedDeals = () => {
     // Fetch real data from API
     const fetchFeaturedDeals = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'https://proyectocompras.onrender.com';
-        const response = await fetch(`${apiUrl}/ahorros/destacados`);
+        const apiUrl = getAhorrosApiUrl();
+        const response = await fetch(`${apiUrl}/destacados`);
         
         if (response.ok) {
           const data = await response.json();

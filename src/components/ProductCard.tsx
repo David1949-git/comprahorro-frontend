@@ -5,8 +5,11 @@ interface Product {
   tienda: string;
   precioFinal: string;
   link: string;
+  affiliateUrl?: string;
   imagen: string;
   tipo: string;
+  disponibilidad?: string;
+  comision?: number;
 }
 
 interface ProductCardProps {
@@ -14,6 +17,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const buyUrl = product.affiliateUrl || product.link;
   return (
     <div className="group bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1">
       {/* Product image with overlay */}
@@ -49,27 +53,32 @@ const ProductCard = ({ product }: ProductCardProps) => {
         
         {/* Price section with professional styling */}
         <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-xl p-3">
-          <div className="flex items-center justify-between">
-            <span className="text-2xl font-bold text-emerald-700">
-              {product.precioFinal}
-            </span>
-            <div className="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full text-xs font-semibold">
-              Mejor Precio
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <span className="text-2xl font-bold text-emerald-700">
+                {product.precioFinal}
+              </span>
+              <div className="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full text-xs font-semibold">
+                {product.disponibilidad || 'Disponible'}
+              </div>
             </div>
+            {product.comision !== undefined && (
+              <p className="text-xs text-slate-500">Servicio prestado: ${product.comision.toFixed(2)}</p>
+            )}
           </div>
         </div>
         
-        {/* Action buttons with prioritized 'Ver en el comercio' */}
+        {/* Action buttons with prioritized 'Comprar' */}
         <div className="space-y-2">
-          {/* Primary action - Ver en el comercio */}
+          {/* Primary action - Comprar */}
           <a
-            href={product.link}
+            href={buyUrl}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener noreferrer nofollow"
             className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-semibold py-3 rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             <ExternalLink size={16} strokeWidth={2} />
-            Ver en el comercio
+            Comprar
           </a>
           
           {/* Secondary actions */}

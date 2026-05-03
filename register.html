@@ -4,6 +4,12 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Crear cuenta - ComprAhorro</title>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png"/>
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png"/>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+  <meta name="theme-color" content="#0a192f"/>
+  <script defer src="/pwa-init.js"></script>
   <link rel="stylesheet" href="styles.css"/>
   <style>
     body { background: var(--gray-bg); display: flex; flex-direction: column; min-height: 100vh; }
@@ -52,7 +58,7 @@
         </div>
         <div class="form-group">
           <label class="form-label" for="email">Correo electronico</label>
-          <input class="form-input" type="email" id="email" placeholder="tu@correo.com"/>
+          <input class="form-input" type="text" id="email" placeholder="tu@correo.com"/>
         </div>
         <div class="form-group">
           <label class="form-label" for="password">Contrasena</label>
@@ -78,6 +84,8 @@
   </div>
   <footer class="footer">ComprAhorro 2026</footer>
 <script>
+  const API_BASE_URL = (window.__API_BASE_URL__ || 'https://comprahorro-backend-1.onrender.com').replace(/\/+$/, '');
+  const API_AUTH_URL = `${API_BASE_URL}/auth`;
   function togglePass(id) {
     const i = document.getElementById(id);
     i.type = i.type === 'password' ? 'text' : 'password';
@@ -124,21 +132,22 @@
     if (password !== password2) { showError('Las contrasenas no coinciden.'); return; }
     btn.textContent = 'Creando cuenta...'; btn.disabled = true;
     try {
-      const res = await fetch('https://comprahorro-backend-1.onrender.com/ahorros/register', {
+      const res = await fetch(`${API_AUTH_URL}/register`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password })
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
         showSuccess('Cuenta creada! Redirigiendo...');
         setTimeout(() => { window.location.href = 'login.html'; }, 1200);
       } else {
         showError(data.message || 'No se pudo crear la cuenta.');
-        btn.textContent = 'Crear cuenta'; btn.disabled = false;
       }
     } catch(e) {
       showError('Error de conexion.');
-      btn.textContent = 'Crear cuenta'; btn.disabled = false;
+    } finally {
+      btn.textContent = 'Crear cuenta';
+      btn.disabled = false;
     }
   }
   if (localStorage.getItem('comprAhorro_token')) window.location.href = 'dashboard.html';

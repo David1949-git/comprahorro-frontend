@@ -4,6 +4,12 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Resultados - ComprAhorro</title>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png"/>
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png"/>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+  <meta name="theme-color" content="#0a192f"/>
+  <script defer src="/pwa-init.js"></script>
   <link rel="stylesheet" href="styles.css"/>
   <style>
     .results-header { padding: 28px 20px 16px; max-width: 900px; margin: 0 auto; }
@@ -84,8 +90,16 @@
   <footer class="footer">ComprAhorro 2026</footer>
 </div>
 <script>
+  const API_BASE_URL = (window.__API_BASE_URL__ || 'https://comprahorro-backend-1.onrender.com').replace(/\/+$/, '');
+  const API_AHORROS_URL = `${API_BASE_URL}/ahorros`;
   const token = localStorage.getItem('comprAhorro_token');
   if (!token) window.location.href = 'login.html';
+  function normalizeAhorrosResponse(data) {
+    if (Array.isArray(data)) return { resultados: data };
+    if (Array.isArray(data?.resultados)) return { resultados: data.resultados };
+    if (Array.isArray(data?.results)) return { resultados: data.results };
+    return { resultados: [] };
+  }
   function parseJWT(t) { try { return JSON.parse(atob(t.split('.')[1])); } catch(e) { return {}; } }
   const name = (parseJWT(token).name || parseJWT(token).email || 'usuario').split(' ')[0];
   document.getElementById('user-name').textContent = '🐷 ' + name;
@@ -132,10 +146,11 @@
     document.getElementById('results-grid').style.display='none';
     document.getElementById('empty-state').style.display='none';
     try {
-      const res = await fetch('https://comprahorro-backend-1.onrender.com/ahorros/buscar?q='+encodeURIComponent(q), { headers:{'Authorization':'Bearer '+token} });
+      const res = await fetch(`${API_AHORROS_URL}/buscar?q=${encodeURIComponent(q)}`, { headers:{'Authorization':'Bearer '+token} });
       if(res.status===401){doLogout();return;}
       const data = await res.json();
-      allResults = Array.isArray(data)?data:(data.results||[]);
+      const normalized = normalizeAhorrosResponse(data);
+      allResults = normalized.resultados;
     } catch(e) { allResults=[]; }
     document.getElementById('loading').style.display='none';
     renderCards(allResults);
