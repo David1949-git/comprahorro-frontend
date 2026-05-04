@@ -62,7 +62,14 @@
   document.getElementById("user-name").textContent = "🐷 " + userName;
   const params = new URLSearchParams(window.location.search);
   const q = params.get("q") || "";
-  if (q) window.location.href = "results.html?q=" + encodeURIComponent(q);
+  
+  // Si hay término de búsqueda, ejecutar búsqueda automáticamente
+  if (q) {
+    // Limpiar el término guardado después de usarlo
+    localStorage.removeItem('terminoBusqueda');
+    localStorage.removeItem('registroExitoso');
+    window.location.href = "results.html?q=" + encodeURIComponent(q);
+  }
   function handleSearch(e) { if (e.key === "Enter") goSearch(); }
   function goSearch() {
     const q = document.getElementById("search-input").value.trim();

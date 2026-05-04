@@ -48,6 +48,9 @@
         <img src="logo.jpeg" alt="ComprAhorro" class="auth-logo"/>
         <h1 class="auth-title">Compr<span>Ahorro</span></h1>
         <p class="auth-sub">Crea tu cuenta gratis y empieza a ahorrar</p>
+        <div class="trust-message" style="background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); color: white; padding: 12px 20px; border-radius: 12px; margin-top: 16px; font-size: 14px; font-weight: 600; text-align: center; box-shadow: 0 4px 15px rgba(30, 64, 175, 0.2);">
+          ¡Regístrate gratis para comenzar tu ahorro!
+        </div>
       </div>
       <div class="card">
         <div class="alert alert-error" id="error-msg"></div>
@@ -138,8 +141,12 @@
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
-        showSuccess('Cuenta creada! Redirigiendo...');
-        setTimeout(() => { window.location.href = 'login.html'; }, 1200);
+        showSuccess('Cuenta creada! Redirigiendo a login...');
+        setTimeout(() => { 
+          // Guardar que el usuario se registró exitosamente
+          localStorage.setItem('registroExitoso', 'true');
+          window.location.href = 'login.html'; 
+        }, 1200);
       } else {
         showError(data.message || 'No se pudo crear la cuenta.');
       }

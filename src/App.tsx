@@ -19,43 +19,12 @@ export default function App() {
 
   const buscar = async () => {
     if (!termino.trim()) return;
-    setCargando(true);
-    setResultados([]);
-    setVeredicto('');
     
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 35000);
-
-    try {
-      const apiUrl = getAhorrosApiUrl();
-      
-      const respuesta = await fetch(`${apiUrl}/buscar?q=${encodeURIComponent(termino)}`, { 
-        method: 'GET', 
-        signal: controller.signal 
-      });
-
-      if (!respuesta.ok) throw new Error('Error de conexión');
-      
-      const data = await respuesta.json();
-      
-      // ORDENAMIENTO ESTRICTO: 
-      // 1. Con Precio y Imagen
-      // 2. Con Precio sin Imagen
-      // 3. El resto (Consultar)
-      const listaOrdenada = (data.resultados || []).sort((a: any, b: any) => {
-        const scoreA = (a.precioFinal && a.precioFinal.includes('$') ? 10 : 0) + (a.imagen ? 5 : 0);
-        const scoreB = (b.precioFinal && b.precioFinal.includes('$') ? 10 : 0) + (b.imagen ? 5 : 0);
-        return scoreB - scoreA;
-      });
-
-      setResultados(listaOrdenada);
-      setVeredicto(data.veredicto || '');
-    } catch (e) {
-      setVeredicto("El radar está buscando. Si no ves resultados, intenta con un término más corto.");
-    } finally {
-      clearTimeout(timeoutId);
-      setCargando(false);
-    }
+    // Guardar término de búsqueda para continuar después del registro
+    localStorage.setItem('terminoBusqueda', termino);
+    
+    // Redirigir a página de registro
+    window.location.href = '/register.html';
   };
 
   const generarFactura = async (item: any) => {

@@ -99,9 +99,20 @@
       if (res.ok && data.token) {
         localStorage.setItem('comprAhorro_token', data.token);
         showSuccess('Bienvenido! Redirigiendo...');
-        const params = new URLSearchParams(window.location.search);
-        const q = params.get('q') || '';
-        setTimeout(() => { window.location.href = 'dashboard.html' + (q ? '?q=' + encodeURIComponent(q) : ''); }, 800);
+        
+        // Obtener término de búsqueda guardado
+        const terminoBusqueda = localStorage.getItem('terminoBusqueda');
+        const registroExitoso = localStorage.getItem('registroExitoso');
+        
+        setTimeout(() => { 
+          if (terminoBusqueda) {
+            // Si hay un término de búsqueda, ir al dashboard con la búsqueda
+            window.location.href = 'dashboard.html?q=' + encodeURIComponent(terminoBusqueda);
+          } else {
+            // Si no, ir al dashboard normal
+            window.location.href = 'dashboard.html';
+          }
+        }, 800);
       } else {
         showError(data.message || 'Credenciales incorrectas.');
         btn.textContent = 'Iniciar sesion'; btn.disabled = false;
