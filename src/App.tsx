@@ -65,14 +65,14 @@ export default function App() {
 
   return (
     <div 
-      className={`min-h-screen flex flex-col items-center px-4 font-sans transition-all duration-700 ${!tieneResultados ? 'justify-center' : 'pt-10'}`}
-      style={{
-        backgroundImage: 'url("/principal-home.png")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
-      }}
+      className={`min-h-screen flex flex-col items-center px-4 font-sans transition-all duration-700 bg-gradient-to-b from-blue-50 to-white ${!tieneResultados ? 'justify-center' : 'pt-10'}`}
     >
+      {/* HEADER/LOGO IMAGE */}
+      <img 
+        src="/principal-home.png" 
+        alt="ComprAhorro" 
+        className="mb-8 max-w-md w-full"
+      />
       
       {/* BUSCADOR CENTRADO */}
       <div className={`w-full flex flex-col items-center justify-center transition-all duration-700 ${!tieneResultados ? 'justify-center' : 'pt-20'}`}>
