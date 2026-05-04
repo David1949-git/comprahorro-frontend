@@ -20,11 +20,17 @@ export default function App() {
   const buscar = async () => {
     if (!termino.trim()) return;
     
-    // Guardar término de búsqueda para continuar después del registro
-    localStorage.setItem('terminoBusqueda', termino);
+    // Verificar si el usuario está autenticado
+    const token = localStorage.getItem('comprAhorro_token');
     
-    // Redirigir a página de registro
-    window.location.href = '/register.html';
+    if (!token) {
+      // Usuario NO logueado: guardar término y redirigir a registro
+      localStorage.setItem('terminoBusqueda', termino);
+      window.location.href = '/register.html';
+    } else {
+      // Usuario SÍ logueado: redirigir al dashboard con la búsqueda
+      window.location.href = `/dashboard.html?q=${encodeURIComponent(termino)}`;
+    }
   };
 
   const generarFactura = async (item: any) => {
