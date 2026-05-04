@@ -16,6 +16,7 @@ export default function App() {
   const [cargando, setCargando] = useState(false);
   const [factura, setFactura] = useState<Factura | null>(null);
   const [itemSeleccionado, setItemSeleccionado] = useState<any>(null);
+  const [buscadorFoco, setBuscadorFoco] = useState(false);
 
   const buscar = async () => {
     if (!termino.trim()) return;
@@ -67,28 +68,47 @@ export default function App() {
       
       {/* BUSCADOR CENTRADO */}
       <div className={`w-full flex flex-col items-center justify-center transition-all duration-700 ${!tieneResultados ? 'justify-center' : 'pt-20'}`}>
-        <div className="flex w-full max-w-xl bg-white rounded-3xl shadow-xl overflow-hidden transition-all" style={{ boxShadow: '0 10px 25px rgba(30, 64, 175, 0.2)' }}>
+        <div className={`flex w-full max-w-xl rounded-3xl overflow-hidden transition-all duration-300 ${buscadorFoco ? 'scale-[1.02]' : 'scale-100'}`}
+             style={{
+               backgroundColor: 'rgba(255, 255, 255, 0.7)',
+               backdropFilter: 'blur(10px)',
+               border: '1px solid rgba(255, 255, 255, 0.3)',
+               boxShadow: '0 20px 40px rgba(30, 64, 175, 0.15), 0 8px 16px rgba(30, 64, 175, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+             }}>
           <input
             type="text"
             placeholder="¿Qué quieres ahorrar hoy?"
-            className="flex-grow px-6 py-4 focus:outline-none text-lg"
+            className="flex-grow px-6 py-4 focus:outline-none text-lg bg-transparent"
             style={{ color: '#1e3a8a' }}
             value={termino}
             onChange={(e) => setTermino(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && buscar()}
+            onFocus={() => setBuscadorFoco(true)}
+            onBlur={() => setBuscadorFoco(false)}
           />
           <button 
             onClick={buscar} 
             disabled={cargando} 
-            className="text-white font-bold px-8 py-4 transition-all hover:opacity-90"
+            className="text-white font-bold px-8 py-4 transition-all hover:opacity-90 bg-transparent"
             style={{ 
-              backgroundColor: '#1e40af',
-              borderRadius: '0 24px 24px 0'
+              backgroundColor: 'rgba(30, 64, 175, 0.85)',
+              borderRadius: '0 24px 24px 0',
+              backdropFilter: 'blur(10px)'
             }}
           >
             {cargando ? '...' : 'BUSCAR'}
           </button>
         </div>
+        
+        {/* MENSAJE DE REGISTRO */}
+        <p className="mt-6 text-center text-lg font-light tracking-wide" 
+           style={{ 
+             color: 'rgba(255, 255, 255, 0.9)',
+             textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+             fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+           }}>
+          ¡Regístrate gratis para comenzar tu ahorro!
+        </p>
       </div>
 
       {/* RESULTADOS */}
