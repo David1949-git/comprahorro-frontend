@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { getAhorrosApiUrl } from '@/lib/api';
+import apiClient from '@/lib/axios';
 
 type Factura = {
   precioBase: number;
@@ -24,13 +25,11 @@ export default function App() {
     setCargando(true);
     try {
       const apiUrl = getAhorrosApiUrl();
-      const respuesta = await fetch(`${apiUrl}/buscar?q=${encodeURIComponent(termino)}`);
+      const respuesta = await apiClient.get(`${apiUrl.replace('https://comprahorro-backend.onrender.com/api', '')}/buscar`, {
+        params: { q: termino }
+      });
       
-      if (!respuesta.ok) {
-        throw new Error('Error en la búsqueda');
-      }
-      
-      const datos = await respuesta.json();
+      const datos = respuesta.data;
       setResultados(datos);
       setVeredicto('');
     } catch (error) {
@@ -48,9 +47,10 @@ export default function App() {
     const precioBase = item.precioFinal.toString().replace(/[^0-9.]/g, '') || '0';
     setCargando(true);
     try {
-      const respuesta = await fetch(`${apiUrl}/factura?precioBase=${encodeURIComponent(precioBase)}`);
-      if (!respuesta.ok) throw new Error('No se pudo generar la factura');
-      const facturaData = await respuesta.json();
+      const respuesta = await apiClient.get(`${apiUrl.replace('https://comprahorro-backend.onrender.com/api', '')}/factura`, {
+        params: { precioBase }
+      });
+      const facturaData = respuesta.data;
       setFactura(facturaData);
       setItemSeleccionado(item);
     } catch (error) {
