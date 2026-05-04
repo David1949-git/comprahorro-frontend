@@ -80,7 +80,15 @@ export default function App() {
   const tieneResultados = resultados.length > 0 || veredicto !== '';
 
   return (
-    <div className={`min-h-screen bg-[#f8fafc] flex flex-col items-center px-4 font-sans transition-all duration-700 ${!tieneResultados ? 'justify-center' : 'pt-10'}`}>
+    <div 
+      className={`min-h-screen flex flex-col items-center px-4 font-sans transition-all duration-700 ${!tieneResultados ? 'justify-center' : 'pt-10'}`}
+      style={{
+        backgroundImage: 'url("/principal-home.png")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
       
       {/* HEADER DEFINITIVO */}
       <div className={`w-full flex flex-col items-center justify-center transition-all duration-700 ${!tieneResultados ? 'mb-4' : 'mb-6'}`}>
@@ -88,38 +96,49 @@ export default function App() {
           <img src="/logo.png" alt="ComprAhorro" className="w-full h-full object-contain mix-blend-multiply" />
         </div>
 
-        <h1 className={`font-black text-[#0a192f] transition-all duration-700 ${!tieneResultados ? 'text-6xl text-center' : 'text-3xl'}`}>ComprAhorro</h1>
+        <h1 className={`font-black transition-all duration-700 ${!tieneResultados ? 'text-6xl text-center' : 'text-3xl'}`} style={{ color: '#1e40af' }}>
+          <span style={{ color: '#1e3a8a' }}>Compr</span>Ahorro
+        </h1>
         {!tieneResultados && (
           <div className="flex flex-col items-center animate-fade-in mt-6">
             <h2 className="text-2xl md:text-3xl font-black text-emerald-600 mb-8 uppercase tracking-tight">¡Nosotros buscamos, tú ahorras!</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-sm font-bold text-slate-600">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-sm font-bold">
               <div className="flex flex-col items-center">
-                <span className="text-emerald-500 text-lg">1. COMPARA</span>
-                <p className="font-medium text-gray-400">Precios reales</p>
+                <span className="text-lg" style={{ color: '#14532d' }}>1. COMPARA</span>
+                <p className="font-medium" style={{ color: '#000000' }}>Precios reales</p>
               </div>
               <div className="flex flex-col items-center">
-                <span className="text-emerald-500 text-lg">2. ELIGE</span>
-                <p className="font-medium text-gray-400">Sin presiones</p>
+                <span className="text-lg" style={{ color: '#14532d' }}>2. ELIGE</span>
+                <p className="font-medium" style={{ color: '#000000' }}>Sin presiones</p>
               </div>
               <div className="flex flex-col items-center">
-                <span className="text-emerald-500 text-lg">3. COMPRA</span>
-                <p className="font-medium text-gray-400">Directo sin intermediarios</p>
+                <span className="text-lg" style={{ color: '#14532d' }}>3. COMPRA</span>
+                <p className="font-medium" style={{ color: '#000000' }}>Directo sin intermediarios</p>
               </div>
             </div>
           </div>
         )}
 
         {/* BUSCADOR */}
-        <div className="flex w-full max-w-xl bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden mt-8 focus-within:ring-4 focus-within:ring-emerald-50 transition-all">
+        <div className="flex w-full max-w-xl bg-white rounded-3xl shadow-xl overflow-hidden mt-8 transition-all" style={{ boxShadow: '0 10px 25px rgba(30, 64, 175, 0.2)' }}>
           <input
             type="text"
             placeholder="¿Qué quieres ahorrar hoy?"
-            className="flex-grow px-6 py-4 text-slate-700 focus:outline-none text-lg"
+            className="flex-grow px-6 py-4 focus:outline-none text-lg"
+            style={{ color: '#1e3a8a' }}
             value={termino}
             onChange={(e) => setTermino(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && buscar()}
           />
-          <button onClick={buscar} disabled={cargando} className="bg-[#0a192f] text-white font-bold px-8 py-4 hover:bg-emerald-600">
+          <button 
+            onClick={buscar} 
+            disabled={cargando} 
+            className="text-white font-bold px-8 py-4 transition-all hover:opacity-90"
+            style={{ 
+              backgroundColor: '#1e40af',
+              borderRadius: '0 24px 24px 0'
+            }}
+          >
             {cargando ? '...' : 'BUSCAR'}
           </button>
         </div>
@@ -128,27 +147,27 @@ export default function App() {
       {/* RESULTADOS */}
       <div className="w-full max-w-4xl pb-20 mt-10">
         {factura && itemSeleccionado && (
-          <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 mb-8">
-            <h2 className="text-xl font-bold text-slate-900 mb-4">Recibo de compra</h2>
-            <p className="text-sm text-slate-500 mb-4">Comercio seleccionado: <strong>{itemSeleccionado.tienda}</strong></p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700">
-              <div className="flex justify-between border-b border-slate-100 pb-2">
+          <div className="bg-white rounded-3xl shadow-sm p-6 mb-8" style={{ boxShadow: '0 4px 15px rgba(30, 64, 175, 0.1)' }}>
+            <h2 className="text-xl font-bold mb-4" style={{ color: '#1e3a8a' }}>Recibo de compra</h2>
+            <p className="text-sm mb-4" style={{ color: '#1e40af' }}>Comercio seleccionado: <strong>{itemSeleccionado.tienda}</strong></p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm" style={{ color: '#1e3a8a' }}>
+              <div className="flex justify-between pb-2" style={{ borderBottom: '1px solid rgba(30, 64, 175, 0.1)' }}>
                 <span>Costo base</span>
                 <span>${factura.precioBase.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between border-b border-slate-100 pb-2">
+              <div className="flex justify-between pb-2" style={{ borderBottom: '1px solid rgba(30, 64, 175, 0.1)' }}>
                 <span>Impuestos</span>
                 <span>${factura.impuestos.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between border-b border-slate-100 pb-2">
+              <div className="flex justify-between pb-2" style={{ borderBottom: '1px solid rgba(30, 64, 175, 0.1)' }}>
                 <span>Servicio de delivery</span>
                 <span>${factura.delivery.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between border-b border-slate-100 pb-2">
+              <div className="flex justify-between pb-2" style={{ borderBottom: '1px solid rgba(30, 64, 175, 0.1)' }}>
                 <span>Servicio prestado</span>
                 <span>${factura.servicioPrestado.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between pt-4 text-base font-bold text-slate-900">
+              <div className="flex justify-between pt-4 text-base font-bold" style={{ color: '#1e3a8a' }}>
                 <span>Total</span>
                 <span>${factura.totalFinal.toFixed(2)}</span>
               </div>
@@ -158,14 +177,19 @@ export default function App() {
                 href={itemSeleccionado.affiliateUrl || itemSeleccionado.link}
                 target="_blank"
                 rel="noopener noreferrer nofollow"
-                className="bg-emerald-600 text-white px-6 py-3 rounded-2xl font-semibold text-center hover:bg-emerald-700 transition"
+                className="text-white px-6 py-3 rounded-2xl font-semibold text-center transition-all hover:opacity-90"
+                style={{ backgroundColor: '#1e40af' }}
               >
                 Comprar en tienda
               </a>
               <button
                 type="button"
                 onClick={() => setFactura(null)}
-                className="border border-slate-300 text-slate-700 px-6 py-3 rounded-2xl hover:bg-slate-50 transition"
+                className="px-6 py-3 rounded-2xl transition-all hover:opacity-80"
+                style={{ 
+                  border: '1px solid #1e40af',
+                  color: '#1e3a8a'
+                }}
               >
                 Cerrar recibo
               </button>
@@ -173,49 +197,39 @@ export default function App() {
           </div>
         )}
         {veredicto && (
-          <div className="bg-white p-6 mb-8 rounded-3xl shadow-sm border-l-8 border-emerald-500 flex items-center">
+          <div className="bg-white p-6 mb-8 rounded-3xl shadow-sm flex items-center" style={{ 
+            borderLeft: '8px solid #14532d',
+            boxShadow: '0 4px 15px rgba(30, 64, 175, 0.1)'
+          }}>
             <span className="text-3xl mr-4">💡</span>
-            <p className="font-bold text-xl text-slate-800 leading-tight">{veredicto}</p>
+            <p className="font-bold text-xl leading-tight" style={{ color: '#1e3a8a' }}>{veredicto}</p>
           </div>
         )}
 
         <div className="space-y-6">
           {resultados.map((item, index) => (
-            <div key={index} className={`bg-white rounded-3xl shadow-sm border border-slate-100 flex flex-col md:flex-row overflow-hidden hover:shadow-md transition-all ${!item.precioFinal || !item.precioFinal.includes('$') ? 'opacity-70' : ''}`}>
-              <div className="md:w-48 bg-white flex-shrink-0 flex items-center justify-center p-6 border-b md:border-b-0 md:border-r border-slate-50">
+            <div key={index} className={`bg-white rounded-3xl shadow-sm flex flex-col md:flex-row overflow-hidden hover:shadow-md transition-all ${!item.precioFinal || !item.precioFinal.includes('$') ? 'opacity-70' : ''}`} style={{ 
+              border: '1px solid rgba(30, 64, 175, 0.1)',
+              boxShadow: '0 4px 15px rgba(30, 64, 175, 0.1)'
+            }}>
+              <div className="md:w-48 bg-white flex-shrink-0 flex items-center justify-center p-6 border-b md:border-b-0 md:border-r" style={{ borderColor: 'rgba(30, 64, 175, 0.05)' }}>
                 {item.imagen ? (
                   <img src={item.imagen} alt={item.producto} className="max-h-32 w-full object-contain" />
                 ) : (
-                  <div className="bg-slate-50 w-24 h-24 rounded-2xl flex items-center justify-center text-4xl">📷</div>
+                  <div className="w-24 h-24 rounded-2xl flex items-center justify-center text-4xl" style={{ backgroundColor: 'rgba(30, 64, 175, 0.05)' }}>📷</div>
                 )}
               </div>
               <div className="p-6 flex-grow flex flex-col justify-between">
                 <div>
-                  <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full mb-2 inline-block">{item.tienda}</span>
-                  <h3 className="font-bold text-slate-900 text-xl leading-tight">{item.producto}</h3>
+                  <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-2 inline-block" style={{ 
+                    color: '#14532d',
+                    backgroundColor: 'rgba(20, 83, 45, 0.1)'
+                  }}>{item.tienda}</span>
+                  <h3 className="font-bold text-xl leading-tight" style={{ color: '#1e3a8a' }}>{item.producto}</h3>
                 </div>
-                <div className="flex flex-col gap-3 mt-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-3xl font-black text-emerald-600">{item.precioFinal || 'Ver precio'}</span>
-                    <span className="text-sm text-slate-500">{item.disponibilidad || 'Disponible'}</span>
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <button
-                      type="button"
-                      onClick={() => generarFactura(item)}
-                      className="w-full sm:w-auto bg-emerald-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-emerald-700 transition"
-                    >
-                      Mostrar factura
-                    </button>
-                    <a
-                      href={item.affiliateUrl || item.link}
-                      target="_blank"
-                      rel="noopener noreferrer nofollow"
-                      className="w-full sm:w-auto bg-[#0a192f] text-white px-6 py-3 rounded-2xl font-bold text-center hover:bg-slate-800 transition"
-                    >
-                      Comprar
-                    </a>
-                  </div>
+                <div className="flex items-center justify-between mt-4">
+                  <span className="text-3xl font-black" style={{ color: '#14532d' }}>{item.precioFinal || 'Ver precio'}</span>
+                  <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-white px-6 py-2 rounded-xl font-bold text-sm transition-all hover:opacity-90" style={{ backgroundColor: '#1e40af' }}>VER TIENDA</a>
                 </div>
               </div>
             </div>
