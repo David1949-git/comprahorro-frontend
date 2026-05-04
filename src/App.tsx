@@ -65,37 +65,9 @@ export default function App() {
       }}
     >
       
-      {/* HEADER DEFINITIVO */}
-      <div className={`w-full flex flex-col items-center justify-center transition-all duration-700 ${!tieneResultados ? 'mb-4' : 'mb-6'}`}>
-        <div className="bg-white rounded-full p-2 w-56 h-56 shadow-2xl mb-8 border-4 border-emerald-50 overflow-hidden">
-          <img src="/logo.png" alt="ComprAhorro" className="w-full h-full object-contain mix-blend-multiply" />
-        </div>
-
-        <h1 className={`font-black transition-all duration-700 ${!tieneResultados ? 'text-6xl text-center' : 'text-3xl'}`} style={{ color: '#1e40af' }}>
-          <span style={{ color: '#1e3a8a' }}>Compr</span>Ahorro
-        </h1>
-        {!tieneResultados && (
-          <div className="flex flex-col items-center animate-fade-in mt-6">
-            <h2 className="text-2xl md:text-3xl font-black text-emerald-600 mb-8 uppercase tracking-tight">¡Nosotros buscamos, tú ahorras!</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-sm font-bold">
-              <div className="flex flex-col items-center">
-                <span className="text-lg" style={{ color: '#14532d' }}>1. COMPARA</span>
-                <p className="font-medium" style={{ color: '#000000' }}>Precios reales</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="text-lg" style={{ color: '#14532d' }}>2. ELIGE</span>
-                <p className="font-medium" style={{ color: '#000000' }}>Sin presiones</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="text-lg" style={{ color: '#14532d' }}>3. COMPRA</span>
-                <p className="font-medium" style={{ color: '#000000' }}>Directo sin intermediarios</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* BUSCADOR */}
-        <div className="flex w-full max-w-xl bg-white rounded-3xl shadow-xl overflow-hidden mt-8 transition-all" style={{ boxShadow: '0 10px 25px rgba(30, 64, 175, 0.2)' }}>
+      {/* BUSCADOR CENTRADO */}
+      <div className={`w-full flex flex-col items-center justify-center transition-all duration-700 ${!tieneResultados ? 'justify-center' : 'pt-20'}`}>
+        <div className="flex w-full max-w-xl bg-white rounded-3xl shadow-xl overflow-hidden transition-all" style={{ boxShadow: '0 10px 25px rgba(30, 64, 175, 0.2)' }}>
           <input
             type="text"
             placeholder="¿Qué quieres ahorrar hoy?"
