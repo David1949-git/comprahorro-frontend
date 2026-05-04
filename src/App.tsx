@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { getAhorrosApiUrl } from '@/lib/api';
 
@@ -37,8 +37,32 @@ export default function App() {
   const [itemSeleccionado, setItemSeleccionado] = useState<any>(null);
 
   const [buscadorFoco, setBuscadorFoco] = useState(false);
+  const [ubicacionUsuario, setUbicacionUsuario] = useState<{lat: number, lon: number} | null>(null);
 
 
+
+  // Obtener ubicación del usuario como Waze
+  const obtenerUbicacionUsuario = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUbicacionUsuario({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude
+          });
+        },
+        (error) => {
+          console.log('Error obteniendo ubicación:', error);
+          // No bloquear la búsqueda si no hay ubicación
+        }
+      );
+    }
+  };
+
+  // Obtener ubicación al montar el componente
+  useEffect(() => {
+    obtenerUbicacionUsuario();
+  }, []);
 
   const buscar = async () => {
 
@@ -52,10 +76,16 @@ export default function App() {
 
       const apiUrl = getAhorrosApiUrl();
 
+      const params: any = { q: termino };
+      
+      // Agregar coordenadas si tenemos ubicación
+      if (ubicacionUsuario) {
+        params.lat = ubicacionUsuario.lat.toString();
+        params.lon = ubicacionUsuario.lon.toString();
+      }
+
       const respuesta = await apiClient.get(`${apiUrl}/buscar`, {
-
-        params: { q: termino }
-
+        params
       });
 
       
