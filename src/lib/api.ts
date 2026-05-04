@@ -1,5 +1,5 @@
 export function getApiBaseUrl(): string {
-  const rawApiUrl = import.meta.env.VITE_API_URL || 'https://comprahorro-backend.onrender.com/api';
+  const rawApiUrl = import.meta.env.VITE_API_URL || 'https://comprahorro-backend-1.onrender.com/api';
   return rawApiUrl.replace(/\/+$/, '');
 }
 

@@ -25,13 +25,13 @@ export default function App() {
     setCargando(true);
     try {
       const apiUrl = getAhorrosApiUrl();
-      const respuesta = await apiClient.get(`${apiUrl.replace('https://comprahorro-backend.onrender.com/api', '')}/buscar`, {
+      const respuesta = await apiClient.get(`${apiUrl}/buscar`, {
         params: { q: termino }
       });
       
       const datos = respuesta.data;
-      setResultados(datos);
-      setVeredicto('');
+      setResultados(datos.resultados || []);
+      setVeredicto(datos.veredicto || '');
     } catch (error) {
       console.error('Error buscando:', error);
       setVeredicto('No se pudieron obtener resultados. Intenta de nuevo.');
