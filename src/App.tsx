@@ -52,7 +52,7 @@ export default function App() {
 
       const apiUrl = getAhorrosApiUrl();
 
-      const respuesta = await apiClient.get(`${apiUrl.replace('https://comprahorro-backend.onrender.com/api', '')}/buscar`, {
+      const respuesta = await apiClient.get(`${apiUrl}/buscar`, {
 
         params: { q: termino }
 
@@ -62,16 +62,34 @@ export default function App() {
 
       const datos = respuesta.data;
 
-      setResultados(datos);
+      setResultados(datos.resultados || []);
+
+      setVeredicto(datos.veredicto || '');
 
       setVeredicto('');
 
     } catch (error) {
 
       console.error('Error buscando:', error);
+      
+      // Error handling mejorado
+      let errorMessage = 'No se pudieron obtener resultados. Intenta de nuevo.';
+      
+      if (error.response) {
+        // Error de respuesta del servidor
+        if (error.response.status === 429) {
+          errorMessage = 'Demasiadas búsquedas. Espera unos segundos e intenta nuevamente.';
+        } else if (error.response.status === 500) {
+          errorMessage = 'Error temporal del servidor. Intenta en un momento.';
+        } else if (error.response.status === 404) {
+          errorMessage = 'Servicio no disponible. Contacta soporte.';
+        }
+      } else if (error.request) {
+        // Error de red
+        errorMessage = 'Error de conexión. Verifica tu internet e intenta nuevamente.';
+      }
 
-      setVeredicto('No se pudieron obtener resultados. Intenta de nuevo.');
-
+      setVeredicto(errorMessage);
       setResultados([]);
 
     } finally {
@@ -96,7 +114,7 @@ export default function App() {
 
     try {
 
-      const respuesta = await apiClient.get(`${apiUrl.replace('https://comprahorro-backend.onrender.com/api', '')}/factura`, {
+      const respuesta = await apiClient.get(`${apiUrl}/factura`, {
 
         params: { precioBase }
 
@@ -210,7 +228,12 @@ export default function App() {
 
           >
 
-            {cargando ? '...' : 'BUSCAR'}
+            {cargando ? (
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <span>BUSCANDO</span>
+              </div>
+            ) : 'BUSCAR'}
 
           </button>
 
@@ -379,13 +402,13 @@ export default function App() {
               <div className="md:w-48 bg-white flex-shrink-0 flex items-center justify-center p-6 border-b md:border-b-0 md:border-r" style={{ borderColor: 'rgba(30, 64, 175, 0.05)' }}>
 
                 {item.imagen ? (
-
                   <img src={item.imagen} alt={item.producto} className="max-h-32 w-full object-contain" />
-
                 ) : (
-
-                  <div className="w-24 h-24 rounded-2xl flex items-center justify-center text-4xl" style={{ backgroundColor: 'rgba(30, 64, 175, 0.05)' }}>📷</div>
-
+                  <img 
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(item.tienda || 'Tienda')}&background=1e40af&color=fff&size=128&bold=true`}
+                    alt={item.tienda} 
+                    className="max-h-32 w-full object-contain rounded-2xl"
+                  />
                 )}
 
               </div>
