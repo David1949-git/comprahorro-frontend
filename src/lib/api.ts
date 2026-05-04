@@ -5,7 +5,8 @@ export function getApiBaseUrl(): string {
 
 export function getAhorrosApiUrl(): string {
   const baseUrl = getApiBaseUrl();
-  return baseUrl.endsWith('/ahorros') ? baseUrl : `${baseUrl}/ahorros`;
+  const apiBaseUrl = baseUrl.endsWith('/api') ? baseUrl : `${baseUrl}/api`;
+  return apiBaseUrl.endsWith('/ahorros') ? apiBaseUrl : `${apiBaseUrl}/ahorros`;
 }
 
 export function buildAhorrosEndpoint(path: string): string {

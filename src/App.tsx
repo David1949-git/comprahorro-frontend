@@ -21,16 +21,24 @@ export default function App() {
   const buscar = async () => {
     if (!termino.trim()) return;
     
-    // Verificar si el usuario está autenticado
-    const token = localStorage.getItem('comprAhorro_token');
-    
-    if (!token) {
-      // Usuario NO logueado: guardar término y redirigir a registro
-      localStorage.setItem('terminoBusqueda', termino);
-      window.location.href = '/register.html';
-    } else {
-      // Usuario SÍ logueado: redirigir al dashboard con la búsqueda
-      window.location.href = `/dashboard.html?q=${encodeURIComponent(termino)}`;
+    setCargando(true);
+    try {
+      const apiUrl = getAhorrosApiUrl();
+      const respuesta = await fetch(`${apiUrl}/buscar?q=${encodeURIComponent(termino)}`);
+      
+      if (!respuesta.ok) {
+        throw new Error('Error en la búsqueda');
+      }
+      
+      const datos = await respuesta.json();
+      setResultados(datos);
+      setVeredicto('');
+    } catch (error) {
+      console.error('Error buscando:', error);
+      setVeredicto('No se pudieron obtener resultados. Intenta de nuevo.');
+      setResultados([]);
+    } finally {
+      setCargando(false);
     }
   };
 
