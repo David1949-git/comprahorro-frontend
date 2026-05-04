@@ -70,7 +70,7 @@ export default function App() {
       {/* HEADER/LOGO IMAGE */}
       <img 
         src="/principal-home.png" 
-        alt="ComprAhorro" 
+        alt="Logo" 
         className="mb-8 max-w-md w-full"
       />
       
