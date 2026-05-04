@@ -1,163 +1,326 @@
 <!DOCTYPE html>
+
 <html lang="es">
+
 <head>
+
   <meta charset="UTF-8"/>
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
   <title>Crear cuenta - ComprAhorro</title>
+
   <link rel="manifest" href="/manifest.json"/>
+
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png"/>
+
   <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png"/>
+
   <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+
   <meta name="theme-color" content="#0a192f"/>
+
   <script defer src="/pwa-init.js"></script>
+
   <link rel="stylesheet" href="styles.css"/>
+
   <style>
+
     body { background: var(--gray-bg); display: flex; flex-direction: column; min-height: 100vh; }
+
     .auth-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 16px; }
+
     .auth-card { width: 100%; max-width: 420px; }
+
     .auth-header { text-align: center; margin-bottom: 28px; }
+
     .auth-logo { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--blue-border); box-shadow: 0 0 0 5px var(--blue-light); margin-bottom: 14px; }
+
     .auth-title { font-size: 22px; font-weight: 800; color: var(--blue-dark); margin-bottom: 4px; }
+
     .auth-title span { color: var(--blue-main); }
+
     .auth-sub { font-size: 13px; color: var(--gray-text); }
+
     .auth-footer { text-align: center; margin-top: 20px; font-size: 13px; color: var(--gray-text); }
+
     .auth-footer a { color: var(--blue-main); font-weight: 600; text-decoration: none; }
+
     .pass-wrap { position: relative; }
+
     .pass-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 16px; color: var(--gray-hint); }
+
     .strength-bar { height: 4px; border-radius: 2px; background: var(--blue-border); margin-top: 6px; overflow: hidden; }
+
     .strength-fill { height: 100%; width: 0%; border-radius: 2px; transition: width 0.3s, background 0.3s; }
+
     .strength-text { font-size: 11px; color: var(--gray-hint); margin-top: 4px; }
+
     .terms { font-size: 12px; color: var(--gray-text); margin-top: 14px; text-align: center; line-height: 1.5; }
+
     .terms a { color: var(--blue-main); text-decoration: none; }
+
   </style>
+
 </head>
+
 <body>
+
   <nav class="navbar">
+
     <a href="index.html" class="nav-brand">
+
       <img src="principal-home.png" alt="ComprAhorro" class="nav-logo"/>
+
       <span class="nav-name">Compr<span>Ahorro</span></span>
+
     </a>
+
     <div class="nav-links">
+
       <a href="index.html">Inicio</a>
+
       <a href="login.html" class="nav-btn outline">Iniciar sesion</a>
+
     </div>
+
   </nav>
+
   <div class="auth-wrap">
+
     <div class="auth-card fade-in">
+
       <div class="auth-header">
-        <img src="principal-home.png" alt="ComprAhorro" class="auth-logo"/>
+
+        <img src="logo.jpeg" alt="ComprAhorro" class="auth-logo"/>
+
         <h1 class="auth-title">Compr<span>Ahorro</span></h1>
+
         <p class="auth-sub">Crea tu cuenta gratis y empieza a ahorrar</p>
+
         <div class="trust-message" style="background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); color: white; padding: 12px 20px; border-radius: 12px; margin-top: 16px; font-size: 14px; font-weight: 600; text-align: center; box-shadow: 0 4px 15px rgba(30, 64, 175, 0.2);">
+
           ¡Regístrate gratis para comenzar tu ahorro!
+
         </div>
+
       </div>
+
       <div class="card">
+
         <div class="alert alert-error" id="error-msg"></div>
+
         <div class="alert alert-success" id="success-msg"></div>
+
         <div class="form-group">
+
           <label class="form-label" for="name">Nombre completo</label>
+
           <input class="form-input" type="text" id="name" placeholder="Tu nombre"/>
+
         </div>
+
         <div class="form-group">
+
           <label class="form-label" for="email">Correo electronico</label>
+
           <input class="form-input" type="text" id="email" placeholder="tu@correo.com"/>
+
         </div>
+
         <div class="form-group">
+
           <label class="form-label" for="password">Contrasena</label>
+
           <div class="pass-wrap">
+
             <input class="form-input" type="password" id="password" placeholder="Minimo 6 caracteres" oninput="checkStrength(this.value)"/>
+
             <button class="pass-toggle" onclick="togglePass('password')" type="button">👁</button>
+
           </div>
+
           <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+
           <div class="strength-text" id="strength-text"></div>
+
         </div>
+
         <div class="form-group">
+
           <label class="form-label" for="password2">Confirmar contrasena</label>
+
           <div class="pass-wrap">
+
             <input class="form-input" type="password" id="password2" placeholder="Repite tu contrasena" onkeydown="if(event.key==='Enter')doRegister()"/>
+
             <button class="pass-toggle" onclick="togglePass('password2')" type="button">👁</button>
+
           </div>
+
         </div>
+
         <button class="btn btn-primary" onclick="doRegister()" id="register-btn">Crear cuenta</button>
+
         <p class="terms">Al registrarte aceptas nuestros <a href="#">Terminos de uso</a></p>
+
       </div>
+
       <div class="auth-footer">Ya tienes cuenta? <a href="login.html">Inicia sesion</a></div>
+
     </div>
+
   </div>
+
   <footer class="footer">ComprAhorro 2026</footer>
+
 <script>
+
   const API_BASE_URL = (window.__API_BASE_URL__ || 'https://comprahorro-backend-1.onrender.com/api').replace(/\/+$/, '');
+
   const API_AUTH_URL = `${API_BASE_URL}/auth`;
+
   function togglePass(id) {
+
     const i = document.getElementById(id);
+
     i.type = i.type === 'password' ? 'text' : 'password';
+
   }
+
   function checkStrength(val) {
+
     const fill = document.getElementById('strength-fill');
+
     const text = document.getElementById('strength-text');
+
     if (!val) { fill.style.width = '0%'; text.textContent = ''; return; }
+
     let score = 0;
+
     if (val.length >= 6) score++;
+
     if (val.length >= 10) score++;
+
     if (/[A-Z]/.test(val)) score++;
+
     if (/[0-9]/.test(val)) score++;
+
     if (/[^A-Za-z0-9]/.test(val)) score++;
+
     const levels = [
+
       { w: '20%', c: '#E53E3E', t: 'Muy debil' },
+
       { w: '40%', c: '#DD6B20', t: 'Debil' },
+
       { w: '60%', c: '#D69E2E', t: 'Regular' },
+
       { w: '80%', c: '#38A169', t: 'Buena' },
+
       { w: '100%', c: '#2DBF8A', t: 'Excelente' }
+
     ];
+
     const lvl = levels[Math.min(score - 1, 4)] || levels[0];
+
     fill.style.width = lvl.w; fill.style.background = lvl.c;
+
     text.textContent = lvl.t; text.style.color = lvl.c;
+
   }
+
   function showError(msg) {
+
     const e = document.getElementById('error-msg');
+
     e.textContent = msg; e.classList.add('show');
+
     document.getElementById('success-msg').classList.remove('show');
+
   }
+
   function showSuccess(msg) {
+
     const e = document.getElementById('success-msg');
+
     e.textContent = msg; e.classList.add('show');
+
     document.getElementById('error-msg').classList.remove('show');
+
   }
+
   async function doRegister() {
+
     const name = document.getElementById('name').value.trim();
+
     const email = document.getElementById('email').value.trim();
+
     const password = document.getElementById('password').value;
+
     const password2 = document.getElementById('password2').value;
+
     const btn = document.getElementById('register-btn');
+
     if (!name || !email || !password || !password2) { showError('Por favor completa todos los campos.'); return; }
+
     if (password.length < 6) { showError('La contrasena debe tener al menos 6 caracteres.'); return; }
+
     if (password !== password2) { showError('Las contrasenas no coinciden.'); return; }
+
     btn.textContent = 'Creando cuenta...'; btn.disabled = true;
+
     try {
+
       const res = await fetch(`${API_AUTH_URL}/register`, {
+
         method: 'POST', headers: { 'Content-Type': 'application/json' },
+
         body: JSON.stringify({ name, email, password })
+
       });
+
       const data = await res.json().catch(() => ({}));
+
       if (res.ok) {
+
         showSuccess('Cuenta creada! Redirigiendo a login...');
+
         setTimeout(() => { 
+
           // Guardar que el usuario se registró exitosamente
+
           localStorage.setItem('registroExitoso', 'true');
+
           window.location.href = 'login.html'; 
+
         }, 1200);
+
       } else {
+
         showError(data.message || 'No se pudo crear la cuenta.');
+
       }
+
     } catch(e) {
+
       showError('Error de conexion.');
+
     } finally {
+
       btn.textContent = 'Crear cuenta';
+
       btn.disabled = false;
+
     }
+
   }
+
   if (localStorage.getItem('comprAhorro_token')) window.location.href = 'dashboard.html';
+
 </script>
+
 </body>
+
 </html>
+
