@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { getAhorrosApiUrl } from '@/lib/api';
+import { getAhorrosApiUrl, getApiBaseUrl } from '@/lib/api';
 
 import apiClient from '@/lib/axios';
 
@@ -135,7 +135,7 @@ export default function App() {
       }
 
       console.log('📤 Enviando solicitud con params:', params);
-      const respuesta = await apiClient.get(`${apiUrl}/buscar`, {
+      const respuesta = await apiClient.get(`${getApiBaseUrl()}/ahorros/buscar`, {
         params
       });
 
