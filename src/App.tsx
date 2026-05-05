@@ -135,7 +135,7 @@ export default function App() {
       }
 
       console.log('📤 Enviando solicitud con params:', params);
-      const respuesta = await apiClient.get(`${getApiBaseUrl()}/ahorros/buscar`, {
+      const respuesta = await apiClient.get(`https://comprahorro-backend-1.onrender.com/api/ahorros/buscar`, {
         params
       });
 
