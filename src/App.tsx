@@ -464,7 +464,7 @@ export default function App() {
 
           {resultados.map((item, index) => (
 
-            <div key={index} className={`bg-white rounded-3xl shadow-sm flex flex-col md:flex-row overflow-hidden hover:shadow-md transition-all ${!item.precioFinal || !item.precioFinal.includes('$') ? 'opacity-70' : ''}`} style={{ 
+            <div key={index} className={`bg-white rounded-3xl shadow-sm flex flex-col md:flex-row overflow-hidden hover:shadow-md transition-all`} style={{ 
 
               border: '1px solid rgba(30, 64, 175, 0.1)',
 
