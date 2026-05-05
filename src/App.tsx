@@ -80,6 +80,26 @@ export default function App() {
     }
   };
 
+  // Fallback por IP como Waze
+  const obtenerUbicacionPorIP = async () => {
+    try {
+      const response = await fetch('https://ipapi.co/json/');
+      const data = await response.json();
+      
+      if (data.latitude && data.longitude) {
+        console.log('Ubicación por IP obtenida:', { lat: data.latitude, lon: data.longitude, city: data.city });
+        setUbicacionUsuario({
+          lat: data.latitude,
+          lon: data.longitude
+        });
+      } else {
+        console.log('No se pudo obtener ubicación por IP');
+      }
+    } catch (error) {
+      console.log('Error en detección por IP:', error);
+    }
+  };
+
   // Obtener ubicación al montar el componente
   useEffect(() => {
     obtenerUbicacionUsuario();
@@ -116,8 +136,6 @@ export default function App() {
       setResultados(datos.resultados || []);
 
       setVeredicto(datos.veredicto || '');
-
-      setVeredicto('');
 
     } catch (error) {
 
