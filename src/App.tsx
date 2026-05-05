@@ -231,7 +231,7 @@ export default function App() {
 
       <img 
 
-        src="/logo-oficial.png" 
+        src="/logo-oficial.png?v=202605051300" 
 
         alt="Logo" 
 
