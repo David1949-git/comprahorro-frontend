@@ -109,7 +109,13 @@ export default function App() {
 
     if (!termino.trim()) return;
 
-    
+    // Verificar si el usuario está autenticado
+    const token = localStorage.getItem('comprAhorro_token');
+    if (!token) {
+      // Redirigir a registro si no está autenticado
+      window.location.href = '/register.html';
+      return;
+    }
 
     setCargando(true);
 
@@ -128,8 +134,6 @@ export default function App() {
       const respuesta = await apiClient.get(`${apiUrl}/buscar`, {
         params
       });
-
-      
 
       const datos = respuesta.data;
 
@@ -324,7 +328,7 @@ export default function App() {
 
            }}>
 
-          ¡Regístrate gratis para comenzar tu ahorro!
+          Regístrate gratis para buscar productos y ahorrar!
 
         </p>
 
