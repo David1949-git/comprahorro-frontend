@@ -41,21 +41,42 @@ export default function App() {
 
 
 
-  // Obtener ubicación del usuario como Waze
-  const obtenerUbicacionUsuario = () => {
+  // Obtener ubicación del usuario como Waze con múltiples fallbacks
+  const obtenerUbicacionUsuario = async () => {
+    // Verificar que estamos en HTTPS para geolocalización precisa
+    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+      console.warn('Geolocalización precisa requiere HTTPS. La precisión puede ser limitada.');
+    }
+
+    // Prioridad 1: GPS del navegador con máxima precisión
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          console.log('Ubicación GPS de alta precisión obtenida:', {
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+            altitude: position.coords.altitude,
+            altitudeAccuracy: position.coords.altitudeAccuracy
+          });
           setUbicacionUsuario({
             lat: position.coords.latitude,
             lon: position.coords.longitude
           });
         },
-        (error) => {
-          console.log('Error obteniendo ubicación:', error);
-          // No bloquear la búsqueda si no hay ubicación
+        async (error) => {
+          console.log('GPS denegado, intentando detección por IP:', error);
+          await obtenerUbicacionPorIP();
+        },
+        {
+          enableHighAccuracy: true,    // Máxima precisión como Waze
+          timeout: 15000,             // 15 segundos para GPS preciso
+          maximumAge: 0               // Sin cache, siempre ubicación actual
         }
       );
+    } else {
+      console.log('Geolocalización no soportada, usando IP');
+      await obtenerUbicacionPorIP();
     }
   };
 
