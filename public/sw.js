@@ -1,15 +1,9 @@
-const CACHE_NAME = "comprahorro-pwa-v1";
+const CACHE_NAME = "comprahorro-pwa-v2-clean";
 const urlsToCache = [
   "/",
   "/index.html",
-  "/dashboard.html",
-  "/results.html",
-  "/results_super.html",
-  "/login.html",
-  "/register.html",
-  "/infocompras.html",
-  "/styles.css",
   "/manifest.json",
+  "/logo-oficial.png",
   "/icon-192.png",
   "/icon-512.png",
   "/apple-touch-icon.png",
@@ -30,7 +24,18 @@ self.addEventListener("activate", (event) => {
           .filter((key) => key !== CACHE_NAME)
           .map((key) => caches.delete(key))
       )
-    )
+    ).then(() => {
+      // Forzar limpieza de caché de logo.png si existe
+      return caches.open(CACHE_NAME).then((cache) => {
+        return cache.keys().then((requests) => {
+          return Promise.all(
+            requests
+              .filter((request) => request.url.includes('logo.png') || request.url.includes('principal-home.png'))
+              .map((request) => cache.delete(request))
+          );
+        });
+      });
+    })
   );
 });
 
