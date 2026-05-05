@@ -209,7 +209,7 @@ export default function App() {
 
       <img 
 
-        src="/principal-home.png" 
+        src="/logo-oficial.png" 
 
         alt="Logo" 
 
