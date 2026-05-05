@@ -118,10 +118,12 @@ export default function App() {
     }
 
     setCargando(true);
+    console.log('🔍 Iniciando búsqueda para:', termino);
 
     try {
 
       const apiUrl = getAhorrosApiUrl();
+      console.log('🌐 URL API:', apiUrl);
 
       const params: any = { q: termino };
       
@@ -129,21 +131,33 @@ export default function App() {
       if (ubicacionUsuario) {
         params.lat = ubicacionUsuario.lat.toString();
         params.lon = ubicacionUsuario.lon.toString();
+        console.log('📍 Usando ubicación:', ubicacionUsuario);
       }
 
+      console.log('📤 Enviando solicitud con params:', params);
       const respuesta = await apiClient.get(`${apiUrl}/buscar`, {
         params
       });
 
+      console.log('📥 Respuesta recibida:', respuesta.data);
       const datos = respuesta.data;
 
-      setResultados(datos.resultados || []);
+      console.log('📊 Resultados:', datos.resultados);
+      console.log('💭 Veredicto:', datos.veredicto);
 
-      setVeredicto(datos.veredicto || '');
+      // FORZAR ACTUALIZACIÓN DE ESTADO
+      setResultados([]); // Limpiar primero
+      setTimeout(() => {
+        setResultados(datos.resultados || []);
+        setVeredicto(datos.veredicto || '');
+        setCargando(false);
+        console.log('✅ Estados actualizados');
+      }, 100);
 
     } catch (error) {
 
-      console.error('Error buscando:', error);
+      console.error('❌ Error buscando:', error);
+      setCargando(false);
       
       // Error handling mejorado
       let errorMessage = 'No se pudieron obtener resultados. Intenta de nuevo.';
