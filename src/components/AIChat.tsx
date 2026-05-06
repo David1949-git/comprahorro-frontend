@@ -1,4 +1,4 @@
-import { MessageCircle, Sparkles, Send, Bot } from "lucide-react";
+import { MessageCircle, Sparkles, Send, Bot, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 interface Message {
@@ -12,7 +12,7 @@ const AIChat = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: '¡Hola! Soy tu asistente de compras de ComprAhorro. ¿En qué puedo ayudarte a encontrar las mejores ofertas?',
+      text: '¡Hola! Soy tu asistente de ComprAhorro. ¿En qué puedo ayudarte a encontrar las mejores ofertas en Panamá?',
       sender: 'ai',
       timestamp: new Date(),
     }
@@ -44,11 +44,10 @@ const AIChat = () => {
     setInputText('');
     setIsTyping(true);
 
-    // Simulate AI response
     setTimeout(() => {
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: `Buscando las mejores ofertas para "${userMessage.text}". He encontrado varios productos con excelentes descuentos en Super 99 y Riba Smith. ¿Te gustaría ver los resultados detallados?`,
+        text: `Buscando las mejores ofertas para "${userMessage.text}". He encontrado varios productos con excelentes descuentos en supermercados de Panamá. ¿Te gustaría ver los resultados detallados?`,
         sender: 'ai',
         timestamp: new Date(),
       };
@@ -84,32 +83,27 @@ const AIChat = () => {
             <Bot size={16} className="text-primary-foreground" />
           </div>
           <div>
-            <h3 className="font-semibold text-foreground">ChatGPT Compras</h3>
-            <p className="text-xs text-muted-foreground">Asistente IA</p>
+            <h3 className="font-semibold text-foreground">Asistente ComprAhorro</h3>
+            <p className="text-xs text-muted-foreground">💡 Te ayuda a ahorrar</p>
           </div>
         </div>
         <button
           onClick={() => setIsOpen(false)}
-          className="text-muted-foreground hover:text-foreground transition-colors"
+          className="text-muted-foreground hover:text-foreground transition-colors p-1 hover:bg-muted rounded-lg"
         >
-          ×
+          <X size={18} />
         </button>
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div
-              className={`max-w-[80%] p-3 rounded-xl ${
-                message.sender === 'user'
-                  ? 'bg-gradient-emerald text-primary-foreground'
-                  : 'bg-muted text-foreground'
-              }`}
-            >
+          <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[80%] p-3 rounded-xl ${
+              message.sender === 'user'
+                ? 'bg-gradient-emerald text-primary-foreground'
+                : 'bg-muted text-foreground'
+            }`}>
               <p className="text-sm">{message.text}</p>
               <p className="text-xs opacity-70 mt-1">
                 {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -117,13 +111,13 @@ const AIChat = () => {
             </div>
           </div>
         ))}
-        
+
         {isTyping && (
           <div className="flex justify-start">
             <div className="bg-muted text-foreground p-3 rounded-xl">
               <div className="flex items-center gap-2">
-                <Sparkles className="animate-pulse" size={16} />
-                <span className="text-sm">Escribiendo...</span>
+                <Sparkles className="animate-pulse text-primary" size={16} />
+                <span className="text-sm">Buscando ofertas...</span>
               </div>
             </div>
           </div>
@@ -139,7 +133,7 @@ const AIChat = () => {
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Pregúntame sobre productos, ofertas..."
+            placeholder="Pregúntame sobre productos u ofertas..."
             className="flex-1 px-3 py-2 bg-muted border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
           />
           <button
