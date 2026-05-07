@@ -98,13 +98,21 @@ export default function App() {
     setCargando(true);
     setFactura(null);
     try {
-      const params: Record<string, string> = { q: termino };
+      // _t rompe el caché del navegador en cada búsqueda
+      const params: Record<string, string> = {
+        q: termino,
+        _t: Date.now().toString(),
+      };
       if (ubicacionUsuario) {
         params.lat = ubicacionUsuario.lat.toString();
         params.lon = ubicacionUsuario.lon.toString();
       }
       const respuesta = await apiClient.get(
-        `https://comprahorro-backend-1.onrender.com/api/ahorros/buscar`, { params }
+        `https://comprahorro-backend-1.onrender.com/api/ahorros/buscar`,
+        {
+          params,
+          headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' },
+        }
       );
       const datos = respuesta.data;
       setResultados([]);
@@ -321,7 +329,6 @@ export default function App() {
           </div>
         )}
 
-        {/* TARJETA GANADOR */}
         {ganador && (
           <section className="mb-10">
             <div className="flex items-center gap-2 mb-4">
@@ -380,7 +387,6 @@ export default function App() {
           </section>
         )}
 
-        {/* FACTURA */}
         {factura && itemSeleccionado && (
           <div className="bg-white rounded-2xl p-6 mb-8"
             style={{ border: '1px solid #dbeafe', boxShadow: '0 4px 15px rgba(30,64,175,0.08)' }}>
@@ -412,7 +418,6 @@ export default function App() {
           </div>
         )}
 
-        {/* TIER A — Foto + Precio */}
         {tierA.length > 0 && (
           <section className="mb-10">
             <div className="flex items-center gap-2 mb-4">
@@ -469,7 +474,6 @@ export default function App() {
           </section>
         )}
 
-        {/* TIER B — Solo foto */}
         {tierB.length > 0 && (
           <section className="mb-10">
             <div className="flex items-center gap-2 mb-4">
@@ -507,7 +511,6 @@ export default function App() {
           </section>
         )}
 
-        {/* TIER C — Sin foto */}
         {tierC.length > 0 && (
           <section className="mb-10">
             <div className="flex items-center gap-2 mb-4">
