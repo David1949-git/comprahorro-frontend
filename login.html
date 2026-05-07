@@ -96,8 +96,8 @@
         body: JSON.stringify({ email, password })
       });
       const data = await res.json();
-      if (res.ok && data.token) {
-        localStorage.setItem('comprAhorro_token', data.token);
+      if (res.ok && data.access_token) {
+        localStorage.setItem('comprAhorro_token', data.access_token);
         showSuccess('Bienvenido! Redirigiendo...');
         
         // Obtener término de búsqueda guardado
@@ -107,10 +107,10 @@
         setTimeout(() => { 
           if (terminoBusqueda) {
             // Si hay un término de búsqueda, ir al dashboard con la búsqueda
-            window.location.href = 'dashboard.html?q=' + encodeURIComponent(terminoBusqueda);
+            window.location.href = '/';
           } else {
             // Si no, ir al dashboard normal
-            window.location.href = 'dashboard.html';
+            window.location.href = '/';
           }
         }, 800);
       } else {
@@ -122,7 +122,7 @@
       btn.textContent = 'Iniciar sesion'; btn.disabled = false;
     }
   }
-  if (localStorage.getItem('comprAhorro_token')) window.location.href = 'dashboard.html';
+  if (localStorage.getItem('comprAhorro_token')) window.location.href = '/';
 </script>
 </body>
 </html>
