@@ -42,34 +42,28 @@ function extraerPrecioNumerico(precio?: string): number {
 const IMG_FALLBACK = '/cerdo-logo.jpg';
 
 export default function App() {
-  const [termino, setTermino]       = useState('');
-  const [resultados, setResultados] = useState<Resultado[]>([]);
-  const [veredicto, setVeredicto]   = useState('');
-  const [cargando, setCargando]     = useState(false);
-  const [factura, setFactura]       = useState<Factura | null>(null);
-  const [itemSel, setItemSel]       = useState<Resultado | null>(null);
-  const [ubicacion, setUbicacion]   = useState<{lat:number;lon:number}|null>(null);
+  const [termino, setTermino]         = useState('');
+  const [resultados, setResultados]   = useState<Resultado[]>([]);
+  const [veredicto, setVeredicto]     = useState('');
+  const [cargando, setCargando]       = useState(false);
+  const [factura, setFactura]         = useState<Factura | null>(null);
+  const [itemSel, setItemSel]         = useState<Resultado | null>(null);
+  const [ubicacion, setUbicacion]     = useState<{lat:number;lon:number}|null>(null);
+  const [verMasRefs, setVerMasRefs]   = useState(false);   // ← colapso "Más referencias"
 
   // ── PWA Install ───────────────────────────────────────────────────────────
   const [installPrompt, setInstallPrompt] = useState<any>(null);
   const [showInstall, setShowInstall]     = useState(false);
 
   useEffect(() => {
-    const handler = (e: Event) => {
-      e.preventDefault();
-      setInstallPrompt(e);
-      setShowInstall(true);
-    };
+    const handler = (e: Event) => { e.preventDefault(); setInstallPrompt(e); setShowInstall(true); };
     window.addEventListener('beforeinstallprompt', handler);
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js');
-      });
-    }
+    if ('serviceWorker' in navigator)
+      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
   }, []);
 
   const handleInstall = async () => {
@@ -99,7 +93,8 @@ export default function App() {
   }, []);
 
   const volverInicio = () => {
-    setResultados([]); setVeredicto(''); setFactura(null); setItemSel(null);
+    setResultados([]); setVeredicto(''); setFactura(null);
+    setItemSel(null); setVerMasRefs(false);
   };
 
   const buscar = async () => {
@@ -110,13 +105,10 @@ export default function App() {
       window.location.href = '/register.html';
       return;
     }
-    setCargando(true); setFactura(null);
+    setCargando(true); setFactura(null); setVerMasRefs(false);
     try {
       const params: Record<string,string> = { q: termino, _t: Date.now().toString() };
-      if (ubicacion) {
-        params.lat = ubicacion.lat.toString();
-        params.lon = ubicacion.lon.toString();
-      }
+      if (ubicacion) { params.lat = ubicacion.lat.toString(); params.lon = ubicacion.lon.toString(); }
       const res = await apiClient.get(
         'https://comprahorro-backend-1.onrender.com/api/ahorros/buscar',
         { params, headers: { 'Cache-Control': 'no-cache' } }
@@ -155,10 +147,16 @@ export default function App() {
     finally { setCargando(false); }
   };
 
-  const tieneResultados = resultados.length > 0 || veredicto !== '';
-  const conImagen        = resultados.filter(tieneImagenValida);
-  const sinImagen        = resultados.filter(r => !tieneImagenValida(r));
-  const conPrecioEImagen = conImagen.filter(tienePrecioValido);
+  const tieneResultados   = resultados.length > 0 || veredicto !== '';
+
+  // ── Clasificación de resultados ───────────────────────────────────────────
+  // Grid principal: solo items CON precio e imagen
+  const conPrecioEImagen  = resultados.filter(r => tienePrecioValido(r) && tieneImagenValida(r));
+  // Grid secundario: tienen precio pero no imagen
+  const conPrecioSinImg   = resultados.filter(r => tienePrecioValido(r) && !tieneImagenValida(r));
+  // Colapsados al final: sin precio (con o sin imagen)
+  const sinPrecio         = resultados.filter(r => !tienePrecioValido(r));
+
   const ganador = conPrecioEImagen.length > 0
     ? conPrecioEImagen.reduce((m, r) =>
         extraerPrecioNumerico(r.precioFinal) < extraerPrecioNumerico(m.precioFinal) ? r : m)
@@ -183,39 +181,31 @@ export default function App() {
           <span>COMPRA</span>
         </div>
         <div className="flex gap-1 sm:gap-2">
-          <a href="/login.html"
-            className="text-xs sm:text-sm font-semibold px-3 py-2 rounded-full hover:bg-blue-50"
+          <a href="/login.html" className="text-xs sm:text-sm font-semibold px-3 py-2 rounded-full hover:bg-blue-50"
             style={{color:'#1e3a8a'}}>Entrar</a>
-          <a href="/register.html"
-            className="text-xs sm:text-sm font-bold px-3 py-2 rounded-full text-white shadow"
+          <a href="/register.html" className="text-xs sm:text-sm font-bold px-3 py-2 rounded-full text-white shadow"
             style={{backgroundColor:'#1e40af'}}>Registrarse</a>
         </div>
       </nav>
 
       {/* HERO */}
       <main className="flex-grow flex flex-col items-center justify-center px-4 py-8 sm:py-16 text-center">
-
-        {/* Logo círculo — tamaño responsive */}
         <div style={{
-          width:'min(150px, 40vw)', height:'min(150px, 40vw)',
-          borderRadius:'50%', margin:'0 auto 20px',
+          width:'min(150px, 40vw)', height:'min(150px, 40vw)', borderRadius:'50%', margin:'0 auto 20px',
           background:'radial-gradient(circle at 40% 35%, #fff 60%, #dbeafe 100%)',
           boxShadow:'0 20px 60px rgba(30,64,175,0.18), inset 0 1px 0 rgba(255,255,255,0.9)',
           display:'flex', alignItems:'center', justifyContent:'center'
         }}>
-          <img src="/cerdo-logo.jpg" alt="ComprAhorro"
-            style={{width:'75%', height:'75%', objectFit:'contain'}}/>
+          <img src="/cerdo-logo.jpg" alt="ComprAhorro" style={{width:'75%', height:'75%', objectFit:'contain'}}/>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-black mb-1"
-          style={{color:'#1e3a8a', letterSpacing:'-1px'}}>
+        <h1 className="text-3xl sm:text-5xl font-black mb-1" style={{color:'#1e3a8a', letterSpacing:'-1px'}}>
           Compr<span style={{color:'#16a34a'}}>Ahorro</span>
         </h1>
         <p className="text-base sm:text-lg font-bold mb-6 sm:mb-10" style={{color:'#16a34a'}}>
           ¡Nosotros buscamos, tú ahorras!
         </p>
 
-        {/* Pasos 1-2-3 */}
         <div className="flex gap-5 sm:gap-10 mb-6 sm:mb-10">
           {[['1','COMPARA','Precios reales'],['2','ELIGE','Sin presiones'],['3','COMPRA','Sin intermediarios']].map(([n,l,d])=>(
             <div key={n} className="flex flex-col items-center">
@@ -226,7 +216,6 @@ export default function App() {
           ))}
         </div>
 
-        {/* Buscador */}
         <div className="w-full max-w-2xl flex rounded-2xl overflow-hidden shadow-2xl"
           style={{border:'1px solid #e2e8f0', background:'white'}}>
           <input type="text" placeholder="¿Qué quieres ahorrar hoy?"
@@ -242,12 +231,9 @@ export default function App() {
               : 'BUSCAR'}
           </button>
         </div>
-        <p className="mt-3 text-xs" style={{color:'#94a3b8'}}>
-          Crea tu cuenta gratis y empieza a ahorrar 🐷
-        </p>
+        <p className="mt-3 text-xs" style={{color:'#94a3b8'}}>Crea tu cuenta gratis y empieza a ahorrar 🐷</p>
       </main>
 
-      {/* FOOTER */}
       <footer className="py-8 px-6 text-white" style={{backgroundColor:'#0f172a'}}>
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-xs">
           <div>
@@ -263,34 +249,26 @@ export default function App() {
           </div>
           <div>
             <p className="font-black tracking-widest uppercase mb-3" style={{color:'#94a3b8'}}>Categorías</p>
-            <ul className="space-y-2" style={{color:'#cbd5e1'}}>
-              <li>Electrónica</li><li>Supermercado</li>
-            </ul>
+            <ul className="space-y-2" style={{color:'#cbd5e1'}}><li>Electrónica</li><li>Supermercado</li></ul>
           </div>
           <div>
             <p className="font-black tracking-widest uppercase mb-3" style={{color:'#94a3b8'}}>Contacto</p>
-            <ul className="space-y-2" style={{color:'#cbd5e1'}}>
-              <li>Soporte</li><li>Sobre Nosotros</li>
-            </ul>
+            <ul className="space-y-2" style={{color:'#cbd5e1'}}><li>Soporte</li><li>Sobre Nosotros</li></ul>
           </div>
         </div>
       </footer>
 
-      {/* BANNER PWA */}
       {showInstall && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white shadow-2xl"
-          style={{borderTop:'2px solid #dbeafe'}}>
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white shadow-2xl" style={{borderTop:'2px solid #dbeafe'}}>
           <div className="max-w-lg mx-auto flex items-center gap-3">
             <img src="/cerdo-logo.jpg" className="w-11 h-11 rounded-full object-cover flex-shrink-0"/>
             <div className="flex-grow">
               <p className="font-black text-sm" style={{color:'#1e3a8a'}}>Instalar ComprAhorro 🐷</p>
               <p className="text-xs" style={{color:'#94a3b8'}}>Accede más rápido desde tu pantalla de inicio</p>
             </div>
-            <button onClick={handleInstall}
-              className="px-4 py-2 rounded-xl font-black text-white text-sm flex-shrink-0"
+            <button onClick={handleInstall} className="px-4 py-2 rounded-xl font-black text-white text-sm flex-shrink-0"
               style={{backgroundColor:'#1e40af'}}>Instalar</button>
-            <button onClick={()=>setShowInstall(false)}
-              className="text-gray-400 text-xl px-1 flex-shrink-0">✕</button>
+            <button onClick={()=>setShowInstall(false)} className="text-gray-400 text-xl px-1 flex-shrink-0">✕</button>
           </div>
         </div>
       )}
@@ -306,15 +284,12 @@ export default function App() {
         style={{borderColor:'#e2e8f0', boxShadow:'0 1px 8px rgba(0,0,0,0.06)'}}>
         <button onClick={volverInicio}
           className="flex items-center gap-1 text-xs font-bold px-2 py-1.5 rounded-lg hover:bg-slate-100 flex-shrink-0"
-          style={{color:'#1e3a8a', border:'1px solid #dbeafe'}}>
-          ← Inicio
-        </button>
+          style={{color:'#1e3a8a', border:'1px solid #dbeafe'}}>← Inicio</button>
         <img src="/cerdo-logo.jpg" onClick={volverInicio}
           className="w-7 h-7 rounded-full object-cover cursor-pointer flex-shrink-0" alt="logo"/>
         <div className="flex flex-grow rounded-xl overflow-hidden"
           style={{border:'1.5px solid #e2e8f0', background:'white', maxWidth:500}}>
-          <input type="text" value={termino}
-            onChange={e=>setTermino(e.target.value)}
+          <input type="text" value={termino} onChange={e=>setTermino(e.target.value)}
             onKeyDown={e=>e.key==='Enter'&&buscar()}
             placeholder="Nueva búsqueda..."
             className="flex-grow px-3 py-2 text-sm focus:outline-none"
@@ -336,9 +311,7 @@ export default function App() {
           <div className="flex items-start gap-3 bg-white rounded-2xl p-4 sm:p-5 mb-6 shadow-sm"
             style={{borderLeft:'5px solid #16a34a'}}>
             <span className="text-xl flex-shrink-0">🤖</span>
-            <p className="text-sm font-semibold leading-relaxed" style={{color:'#1e3a8a'}}>
-              {veredicto}
-            </p>
+            <p className="text-sm font-semibold leading-relaxed" style={{color:'#1e3a8a'}}>{veredicto}</p>
           </div>
         )}
 
@@ -365,29 +338,20 @@ export default function App() {
                 <div>
                   <span className="inline-block text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full mb-2"
                     style={{backgroundColor:'#dcfce7', color:'#15803d'}}>{ganador.tienda}</span>
-                  <h3 className="font-bold text-lg leading-snug" style={{color:'#0f172a'}}>
-                    {ganador.producto}
-                  </h3>
+                  <h3 className="font-bold text-lg leading-snug" style={{color:'#0f172a'}}>{ganador.producto}</h3>
                 </div>
                 <div className="flex items-end justify-between mt-4 flex-wrap gap-3">
                   <div>
                     <p className="text-xs font-semibold mb-1" style={{color:'#94a3b8'}}>PRECIO</p>
-                    <span className="text-3xl sm:text-4xl font-black" style={{color:'#15803d'}}>
-                      {ganador.precioFinal}
-                    </span>
+                    <span className="text-3xl sm:text-4xl font-black" style={{color:'#15803d'}}>{ganador.precioFinal}</span>
                   </div>
                   <div className="flex gap-2 flex-wrap">
                     <button onClick={()=>generarFactura(ganador)}
                       className="text-sm px-4 py-2 rounded-xl font-bold hover:opacity-80"
-                      style={{border:'2px solid #15803d', color:'#15803d'}}>
-                      Ver recibo
-                    </button>
-                    <a href={ganador.affiliateUrl||ganador.link} target="_blank"
-                      rel="noopener noreferrer nofollow"
+                      style={{border:'2px solid #15803d', color:'#15803d'}}>Ver recibo</button>
+                    <a href={ganador.affiliateUrl||ganador.link} target="_blank" rel="noopener noreferrer nofollow"
                       className="text-sm px-5 py-2 rounded-xl font-black text-white hover:opacity-90 shadow"
-                      style={{backgroundColor:'#15803d'}}>
-                      IR A LA TIENDA →
-                    </a>
+                      style={{backgroundColor:'#15803d'}}>IR A LA TIENDA →</a>
                   </div>
                 </div>
               </div>
@@ -397,8 +361,7 @@ export default function App() {
 
         {/* FACTURA */}
         {factura && itemSel && (
-          <div className="bg-white rounded-2xl p-5 mb-6 shadow-sm"
-            style={{border:'1px solid #dbeafe'}}>
+          <div className="bg-white rounded-2xl p-5 mb-6 shadow-sm" style={{border:'1px solid #dbeafe'}}>
             <h2 className="font-black text-lg mb-4" style={{color:'#1e3a8a'}}>🧾 Recibo estimado</h2>
             <p className="text-sm mb-4 font-semibold" style={{color:'#475569'}}>
               Comercio: <strong>{itemSel.tienda}</strong>
@@ -410,20 +373,16 @@ export default function App() {
                 ['Delivery estimado',    `$${factura.delivery.toFixed(2)}`],
                 ['Servicio ComprAhorro', `$${factura.servicioPrestado.toFixed(2)}`],
               ].map(([k,v])=>(
-                <div key={k} className="flex justify-between py-2 border-b"
-                  style={{borderColor:'#f1f5f9'}}>
+                <div key={k} className="flex justify-between py-2 border-b" style={{borderColor:'#f1f5f9'}}>
                   <span>{k}</span><span className="font-semibold">{v}</span>
                 </div>
               ))}
-              <div className="flex justify-between pt-3 font-black text-base"
-                style={{color:'#1e3a8a'}}>
-                <span>TOTAL ESTIMADO</span>
-                <span>${factura.totalFinal.toFixed(2)}</span>
+              <div className="flex justify-between pt-3 font-black text-base" style={{color:'#1e3a8a'}}>
+                <span>TOTAL ESTIMADO</span><span>${factura.totalFinal.toFixed(2)}</span>
               </div>
             </div>
             <div className="flex gap-3 mt-5">
-              <a href={itemSel.affiliateUrl||itemSel.link} target="_blank"
-                rel="noopener noreferrer nofollow"
+              <a href={itemSel.affiliateUrl||itemSel.link} target="_blank" rel="noopener noreferrer nofollow"
                 className="px-5 py-2 rounded-xl text-sm font-black text-white hover:opacity-90"
                 style={{backgroundColor:'#1e40af'}}>Comprar ahora</a>
               <button onClick={()=>setFactura(null)}
@@ -433,116 +392,131 @@ export default function App() {
           </div>
         )}
 
-        {/* GRID — con imagen */}
-        {conImagen.length > 0 && (
+        {/* GRID PRINCIPAL — con precio e imagen */}
+        {conPrecioEImagen.length > 0 && (
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
               <span>🛍️</span>
               <h2 className="font-black text-sm tracking-widest uppercase" style={{color:'#1e3a8a'}}>
-                Productos encontrados
+                Productos con precio
               </h2>
               <span className="text-xs px-2 py-0.5 rounded-full font-bold"
                 style={{backgroundColor:'#dbeafe', color:'#1e40af'}}>
-                {conImagen.length} resultados
+                {conPrecioEImagen.length} resultados
               </span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-              {conImagen.map((item, i) => {
-                const tienePrecio = tienePrecioValido(item);
-                return (
-                  <div key={i}
-                    className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col"
-                    style={{border:'1px solid #f1f5f9'}}>
-                    <div className="flex items-center justify-center p-3 relative"
-                      style={{background:'#f8fafc', height:140}}>
-                      {tienePrecio && (
-                        <span className="absolute top-2 right-2 text-xs font-black px-2 py-0.5 rounded-full text-white"
-                          style={{backgroundColor:'#15803d'}}>
-                          {item.precioFinal}
-                        </span>
-                      )}
-                      <img src={item.imagen||IMG_FALLBACK} alt={item.producto}
-                        className="max-h-28 max-w-full object-contain"
-                        onError={e=>{(e.target as HTMLImageElement).src=IMG_FALLBACK}}/>
-                    </div>
-                    <div className="p-3 flex flex-col flex-grow">
-                      <span className="text-[9px] font-black uppercase tracking-widest mb-1"
-                        style={{color:'#16a34a'}}>{item.tienda}</span>
-                      <h3 className="font-semibold text-xs leading-snug flex-grow"
-                        style={{color:'#0f172a'}}>{item.producto}</h3>
-                      {item.rating && item.rating > 0 ? (
-                        <p className="text-xs mt-1" style={{color:'#f59e0b'}}>
-                          {'★'.repeat(Math.round(item.rating))}
-                          {'☆'.repeat(5-Math.round(item.rating))}
-                        </p>
-                      ) : null}
-                      {tienePrecio && (
-                        <p className="text-xl font-black mt-2" style={{color:'#15803d'}}>
-                          {item.precioFinal}
-                        </p>
-                      )}
-                      <div className="flex gap-2 mt-3 pt-3" style={{borderTop:'1px solid #f1f5f9'}}>
-                        {tienePrecio && (
-                          <button onClick={()=>generarFactura(item)}
-                            className="text-xs px-2 py-1.5 rounded-lg font-bold hover:opacity-80 flex-shrink-0"
-                            style={{border:'1px solid #dbeafe', color:'#1e40af'}}>
-                            Recibo
-                          </button>
-                        )}
-                        <a href={item.affiliateUrl||item.link} target="_blank"
-                          rel="noopener noreferrer nofollow"
-                          className="text-xs px-3 py-1.5 rounded-lg font-black text-white hover:opacity-90 flex-grow text-center"
-                          style={{backgroundColor: tienePrecio ? '#1e40af' : '#15803d'}}>
-                          {tienePrecio ? 'Ver →' : 'Ver precio →'}
-                        </a>
-                      </div>
+              {conPrecioEImagen.map((item, i) => (
+                <div key={i}
+                  className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col"
+                  style={{border:'1px solid #f1f5f9'}}>
+                  <div className="flex items-center justify-center p-3 relative"
+                    style={{background:'#f8fafc', height:140}}>
+                    <span className="absolute top-2 right-2 text-xs font-black px-2 py-0.5 rounded-full text-white"
+                      style={{backgroundColor:'#15803d'}}>{item.precioFinal}</span>
+                    <img src={item.imagen||IMG_FALLBACK} alt={item.producto}
+                      className="max-h-28 max-w-full object-contain"
+                      onError={e=>{(e.target as HTMLImageElement).src=IMG_FALLBACK}}/>
+                  </div>
+                  <div className="p-3 flex flex-col flex-grow">
+                    <span className="text-[9px] font-black uppercase tracking-widest mb-1"
+                      style={{color:'#16a34a'}}>{item.tienda}</span>
+                    <h3 className="font-semibold text-xs leading-snug flex-grow" style={{color:'#0f172a'}}>
+                      {item.producto}
+                    </h3>
+                    {item.rating && item.rating > 0 ? (
+                      <p className="text-xs mt-1" style={{color:'#f59e0b'}}>
+                        {'★'.repeat(Math.round(item.rating))}{'☆'.repeat(5-Math.round(item.rating))}
+                      </p>
+                    ) : null}
+                    <p className="text-xl font-black mt-2" style={{color:'#15803d'}}>{item.precioFinal}</p>
+                    <div className="flex gap-2 mt-3 pt-3" style={{borderTop:'1px solid #f1f5f9'}}>
+                      <button onClick={()=>generarFactura(item)}
+                        className="text-xs px-2 py-1.5 rounded-lg font-bold hover:opacity-80 flex-shrink-0"
+                        style={{border:'1px solid #dbeafe', color:'#1e40af'}}>Recibo</button>
+                      <a href={item.affiliateUrl||item.link} target="_blank" rel="noopener noreferrer nofollow"
+                        className="text-xs px-3 py-1.5 rounded-lg font-black text-white hover:opacity-90 flex-grow text-center"
+                        style={{backgroundColor:'#1e40af'}}>Ver →</a>
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </div>
         )}
 
-        {/* LISTA — sin imagen */}
-        {sinImagen.length > 0 && (
+        {/* LISTA SECUNDARIA — con precio pero sin imagen */}
+        {conPrecioSinImg.length > 0 && (
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
-              <span>🔗</span>
-              <h2 className="font-black text-sm tracking-widest uppercase" style={{color:'#64748b'}}>
-                Más referencias
+              <span>💲</span>
+              <h2 className="font-black text-sm tracking-widest uppercase" style={{color:'#1e3a8a'}}>
+                Más opciones con precio
               </h2>
               <span className="text-xs px-2 py-0.5 rounded-full font-bold"
-                style={{backgroundColor:'#f1f5f9', color:'#64748b'}}>
-                {sinImagen.length}
-              </span>
+                style={{backgroundColor:'#dbeafe', color:'#1e40af'}}>{conPrecioSinImg.length}</span>
             </div>
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm"
-              style={{border:'1px solid #f1f5f9'}}>
-              {sinImagen.map((item, i) => (
+            <div className="bg-white rounded-2xl overflow-hidden shadow-sm" style={{border:'1px solid #f1f5f9'}}>
+              {conPrecioSinImg.map((item, i) => (
                 <div key={i}
-                  className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors ${i<sinImagen.length-1?'border-b':''}`}
+                  className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors ${i<conPrecioSinImg.length-1?'border-b':''}`}
                   style={{borderColor:'#f8fafc'}}>
                   <div className="flex-grow min-w-0">
-                    <p className="text-[10px] font-black uppercase tracking-widest"
-                      style={{color:'#94a3b8'}}>{item.tienda}</p>
-                    <p className="text-sm font-semibold truncate"
-                      style={{color:'#1e3a8a'}}>{item.producto}</p>
-                    {tienePrecioValido(item) && (
-                      <p className="text-sm font-black" style={{color:'#15803d'}}>
-                        {item.precioFinal}
-                      </p>
-                    )}
+                    <p className="text-[10px] font-black uppercase tracking-widest" style={{color:'#94a3b8'}}>{item.tienda}</p>
+                    <p className="text-sm font-semibold truncate" style={{color:'#1e3a8a'}}>{item.producto}</p>
+                    <p className="text-sm font-black" style={{color:'#15803d'}}>{item.precioFinal}</p>
                   </div>
-                  <a href={item.affiliateUrl||item.link} target="_blank"
-                    rel="noopener noreferrer nofollow"
-                    className="text-xs font-black flex-shrink-0 px-3 py-1.5 rounded-lg hover:opacity-80"
-                    style={{backgroundColor:'#f1f5f9', color:'#1e40af'}}>
-                    Ver →
-                  </a>
+                  <div className="flex gap-2 flex-shrink-0">
+                    <button onClick={()=>generarFactura(item)}
+                      className="text-xs px-2 py-1.5 rounded-lg font-bold hover:opacity-80"
+                      style={{border:'1px solid #dbeafe', color:'#1e40af'}}>Recibo</button>
+                    <a href={item.affiliateUrl||item.link} target="_blank" rel="noopener noreferrer nofollow"
+                      className="text-xs font-black px-3 py-1.5 rounded-lg hover:opacity-80"
+                      style={{backgroundColor:'#f1f5f9', color:'#1e40af'}}>Ver →</a>
+                  </div>
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* MÁS REFERENCIAS — sin precio, colapsado ─────────────────────── */}
+        {sinPrecio.length > 0 && (
+          <div className="mb-8">
+            <button
+              onClick={() => setVerMasRefs(!verMasRefs)}
+              className="w-full flex items-center justify-between px-4 py-3 rounded-2xl hover:bg-slate-100 transition-colors"
+              style={{background:'white', border:'1px solid #e2e8f0'}}>
+              <div className="flex items-center gap-2">
+                <span>🔗</span>
+                <span className="font-black text-sm tracking-widest uppercase" style={{color:'#64748b'}}>
+                  Más referencias
+                </span>
+                <span className="text-xs px-2 py-0.5 rounded-full font-bold"
+                  style={{backgroundColor:'#f1f5f9', color:'#64748b'}}>{sinPrecio.length}</span>
+              </div>
+              <span className="text-lg" style={{color:'#94a3b8'}}>{verMasRefs ? '▲' : '▼'}</span>
+            </button>
+
+            {verMasRefs && (
+              <div className="mt-2 bg-white rounded-2xl overflow-hidden shadow-sm"
+                style={{border:'1px solid #f1f5f9'}}>
+                {sinPrecio.map((item, i) => (
+                  <div key={i}
+                    className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors ${i<sinPrecio.length-1?'border-b':''}`}
+                    style={{borderColor:'#f8fafc'}}>
+                    <div className="flex-grow min-w-0">
+                      <p className="text-[10px] font-black uppercase tracking-widest" style={{color:'#94a3b8'}}>{item.tienda}</p>
+                      <p className="text-sm font-semibold truncate" style={{color:'#1e3a8a'}}>{item.producto}</p>
+                      <p className="text-xs" style={{color:'#94a3b8'}}>Sin precio disponible</p>
+                    </div>
+                    <a href={item.affiliateUrl||item.link} target="_blank" rel="noopener noreferrer nofollow"
+                      className="text-xs font-black flex-shrink-0 px-3 py-1.5 rounded-lg hover:opacity-80"
+                      style={{backgroundColor:'#f1f5f9', color:'#1e40af'}}>Ver precio →</a>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -550,73 +524,50 @@ export default function App() {
         {resultados.length === 0 && !cargando && veredicto && (
           <div className="text-center py-16">
             <p className="text-5xl mb-4">🔍</p>
-            <p className="font-bold text-lg mb-2" style={{color:'#1e3a8a'}}>
-              No encontramos resultados
-            </p>
-            <p className="text-sm mb-6" style={{color:'#94a3b8'}}>
-              Prueba con otras palabras clave
-            </p>
+            <p className="font-bold text-lg mb-2" style={{color:'#1e3a8a'}}>No encontramos resultados</p>
+            <p className="text-sm mb-6" style={{color:'#94a3b8'}}>Prueba con otras palabras clave</p>
             <button onClick={volverInicio}
               className="px-6 py-3 rounded-xl font-black text-white text-sm hover:opacity-90"
-              style={{backgroundColor:'#1e40af'}}>
-              ← Volver al inicio
-            </button>
+              style={{backgroundColor:'#1e40af'}}>← Volver al inicio</button>
           </div>
         )}
       </main>
 
-      {/* FOOTER */}
       <footer className="py-8 px-6 text-white" style={{backgroundColor:'#0f172a'}}>
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-xs">
           <div>
-            <p className="font-black text-sm mb-2">
-              Compr<span style={{color:'#4ade80'}}>Ahorro</span>
-            </p>
+            <p className="font-black text-sm mb-2">Compr<span style={{color:'#4ade80'}}>Ahorro</span></p>
             <p style={{color:'#94a3b8'}}>Compara precios y ahorra en Panamá.</p>
           </div>
           <div>
-            <p className="font-black tracking-widest uppercase mb-3" style={{color:'#94a3b8'}}>
-              Navegación
-            </p>
+            <p className="font-black tracking-widest uppercase mb-3" style={{color:'#94a3b8'}}>Navegación</p>
             <ul className="space-y-2" style={{color:'#cbd5e1'}}>
               <li><button onClick={volverInicio} className="hover:text-white">Inicio</button></li>
               <li><a href="/login.html" className="hover:text-white">Mi Cuenta</a></li>
             </ul>
           </div>
           <div>
-            <p className="font-black tracking-widest uppercase mb-3" style={{color:'#94a3b8'}}>
-              Categorías
-            </p>
-            <ul className="space-y-2" style={{color:'#cbd5e1'}}>
-              <li>Electrónica</li><li>Supermercado</li>
-            </ul>
+            <p className="font-black tracking-widest uppercase mb-3" style={{color:'#94a3b8'}}>Categorías</p>
+            <ul className="space-y-2" style={{color:'#cbd5e1'}}><li>Electrónica</li><li>Supermercado</li></ul>
           </div>
           <div>
-            <p className="font-black tracking-widest uppercase mb-3" style={{color:'#94a3b8'}}>
-              Contacto
-            </p>
-            <ul className="space-y-2" style={{color:'#cbd5e1'}}>
-              <li>Soporte</li><li>Sobre Nosotros</li>
-            </ul>
+            <p className="font-black tracking-widest uppercase mb-3" style={{color:'#94a3b8'}}>Contacto</p>
+            <ul className="space-y-2" style={{color:'#cbd5e1'}}><li>Soporte</li><li>Sobre Nosotros</li></ul>
           </div>
         </div>
       </footer>
 
-      {/* BANNER PWA */}
       {showInstall && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white shadow-2xl"
-          style={{borderTop:'2px solid #dbeafe'}}>
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white shadow-2xl" style={{borderTop:'2px solid #dbeafe'}}>
           <div className="max-w-lg mx-auto flex items-center gap-3">
             <img src="/cerdo-logo.jpg" className="w-11 h-11 rounded-full object-cover flex-shrink-0"/>
             <div className="flex-grow">
               <p className="font-black text-sm" style={{color:'#1e3a8a'}}>Instalar ComprAhorro 🐷</p>
               <p className="text-xs" style={{color:'#94a3b8'}}>Accede más rápido desde tu pantalla de inicio</p>
             </div>
-            <button onClick={handleInstall}
-              className="px-4 py-2 rounded-xl font-black text-white text-sm flex-shrink-0"
+            <button onClick={handleInstall} className="px-4 py-2 rounded-xl font-black text-white text-sm flex-shrink-0"
               style={{backgroundColor:'#1e40af'}}>Instalar</button>
-            <button onClick={()=>setShowInstall(false)}
-              className="text-gray-400 text-xl px-1 flex-shrink-0">✕</button>
+            <button onClick={()=>setShowInstall(false)} className="text-gray-400 text-xl px-1 flex-shrink-0">✕</button>
           </div>
         </div>
       )}
