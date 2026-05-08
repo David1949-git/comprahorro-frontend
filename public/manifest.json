@@ -1,12 +1,12 @@
 {
   "name": "ComprAhorro",
   "short_name": "ComprAhorro",
-  "description": "ComprAhorro busca y compara precios para ayudarte a ahorrar.",
+  "description": "El Waze de compras de Panamá.",
   "start_url": "/",
-  "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0a192f",
+  "orientation": "portrait",
+  "background_color": "#f0f9ff",
+  "theme_color": "#1e3a8a",
   "icons": [
     {
       "src": "/icon-192.png",

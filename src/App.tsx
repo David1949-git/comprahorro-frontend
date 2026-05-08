@@ -42,14 +42,45 @@ function extraerPrecioNumerico(precio?: string): number {
 const IMG_FALLBACK = '/cerdo-logo.jpg';
 
 export default function App() {
-  const [termino, setTermino]     = useState('');
+  const [termino, setTermino]       = useState('');
   const [resultados, setResultados] = useState<Resultado[]>([]);
-  const [veredicto, setVeredicto] = useState('');
-  const [cargando, setCargando]   = useState(false);
-  const [factura, setFactura]     = useState<Factura | null>(null);
-  const [itemSel, setItemSel]     = useState<Resultado | null>(null);
-  const [ubicacion, setUbicacion] = useState<{lat:number;lon:number}|null>(null);
+  const [veredicto, setVeredicto]   = useState('');
+  const [cargando, setCargando]     = useState(false);
+  const [factura, setFactura]       = useState<Factura | null>(null);
+  const [itemSel, setItemSel]       = useState<Resultado | null>(null);
+  const [ubicacion, setUbicacion]   = useState<{lat:number;lon:number}|null>(null);
 
+  // ── PWA Install ───────────────────────────────────────────────────────────
+  const [installPrompt, setInstallPrompt] = useState<any>(null);
+  const [showInstall, setShowInstall]     = useState(false);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+      setShowInstall(true);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  }, []);
+
+  const handleInstall = async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') setShowInstall(false);
+    setInstallPrompt(null);
+  };
+
+  // ── Geolocation ───────────────────────────────────────────────────────────
   useEffect(() => {
     const fetchIPLocation = async () => {
       try {
@@ -125,12 +156,8 @@ export default function App() {
   };
 
   const tieneResultados = resultados.length > 0 || veredicto !== '';
-
-  // Items con imagen → grid | Items sin imagen → lista compacta
-  const conImagen  = resultados.filter(tieneImagenValida);
-  const sinImagen  = resultados.filter(r => !tieneImagenValida(r));
-
-  // Ganador = el de menor precio entre los que tienen precio E imagen
+  const conImagen        = resultados.filter(tieneImagenValida);
+  const sinImagen        = resultados.filter(r => !tieneImagenValida(r));
   const conPrecioEImagen = conImagen.filter(tienePrecioValido);
   const ganador = conPrecioEImagen.length > 0
     ? conPrecioEImagen.reduce((m, r) =>
@@ -142,10 +169,11 @@ export default function App() {
     <div className="min-h-screen flex flex-col"
       style={{ background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #dbeafe 100%)' }}>
 
-      <nav className="flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur-md shadow-sm">
+      {/* NAVBAR */}
+      <nav className="flex items-center justify-between px-4 py-3 bg-white/80 backdrop-blur-md shadow-sm">
         <div className="flex items-center gap-2">
-          <img src="/cerdo-logo.jpg" className="w-9 h-9 rounded-full object-cover shadow" alt="logo"/>
-          <span className="font-extrabold text-xl" style={{color:'#1e3a8a'}}>
+          <img src="/cerdo-logo.jpg" className="w-8 h-8 rounded-full object-cover shadow" alt="logo"/>
+          <span className="font-extrabold text-lg" style={{color:'#1e3a8a'}}>
             Compr<span style={{color:'#16a34a'}}>Ahorro</span>
           </span>
         </div>
@@ -154,50 +182,61 @@ export default function App() {
           <span>ELIGE</span><span className="mx-2">·</span>
           <span>COMPRA</span>
         </div>
-        <div className="flex gap-2">
-          <a href="/login.html" className="text-sm font-semibold px-4 py-2 rounded-full hover:bg-blue-50"
+        <div className="flex gap-1 sm:gap-2">
+          <a href="/login.html"
+            className="text-xs sm:text-sm font-semibold px-3 py-2 rounded-full hover:bg-blue-50"
             style={{color:'#1e3a8a'}}>Entrar</a>
           <a href="/register.html"
-            className="text-sm font-bold px-4 py-2 rounded-full text-white shadow"
+            className="text-xs sm:text-sm font-bold px-3 py-2 rounded-full text-white shadow"
             style={{backgroundColor:'#1e40af'}}>Registrarse</a>
         </div>
       </nav>
 
-      <main className="flex-grow flex flex-col items-center justify-center px-4 py-16 text-center">
+      {/* HERO */}
+      <main className="flex-grow flex flex-col items-center justify-center px-4 py-8 sm:py-16 text-center">
+
+        {/* Logo círculo — tamaño responsive */}
         <div style={{
-          width:160, height:160, borderRadius:'50%', margin:'0 auto 24px',
+          width:'min(150px, 40vw)', height:'min(150px, 40vw)',
+          borderRadius:'50%', margin:'0 auto 20px',
           background:'radial-gradient(circle at 40% 35%, #fff 60%, #dbeafe 100%)',
           boxShadow:'0 20px 60px rgba(30,64,175,0.18), inset 0 1px 0 rgba(255,255,255,0.9)',
           display:'flex', alignItems:'center', justifyContent:'center'
         }}>
           <img src="/cerdo-logo.jpg" alt="ComprAhorro"
-            style={{width:120, height:120, objectFit:'contain'}}/>
+            style={{width:'75%', height:'75%', objectFit:'contain'}}/>
         </div>
-        <h1 className="text-5xl font-black mb-1" style={{color:'#1e3a8a', letterSpacing:'-1px'}}>
+
+        <h1 className="text-3xl sm:text-5xl font-black mb-1"
+          style={{color:'#1e3a8a', letterSpacing:'-1px'}}>
           Compr<span style={{color:'#16a34a'}}>Ahorro</span>
         </h1>
-        <p className="text-lg font-bold mb-10" style={{color:'#16a34a'}}>
+        <p className="text-base sm:text-lg font-bold mb-6 sm:mb-10" style={{color:'#16a34a'}}>
           ¡Nosotros buscamos, tú ahorras!
         </p>
-        <div className="flex gap-10 mb-10">
+
+        {/* Pasos 1-2-3 */}
+        <div className="flex gap-5 sm:gap-10 mb-6 sm:mb-10">
           {[['1','COMPARA','Precios reales'],['2','ELIGE','Sin presiones'],['3','COMPRA','Sin intermediarios']].map(([n,l,d])=>(
             <div key={n} className="flex flex-col items-center">
-              <span className="text-3xl font-black" style={{color:'#16a34a'}}>{n}</span>
-              <span className="text-xs font-black tracking-widest mt-1" style={{color:'#16a34a'}}>{l}</span>
-              <span className="text-xs mt-1" style={{color:'#94a3b8'}}>{d}</span>
+              <span className="text-2xl sm:text-3xl font-black" style={{color:'#16a34a'}}>{n}</span>
+              <span className="text-[10px] sm:text-xs font-black tracking-widest mt-1" style={{color:'#16a34a'}}>{l}</span>
+              <span className="text-[10px] sm:text-xs mt-1 hidden sm:block" style={{color:'#94a3b8'}}>{d}</span>
             </div>
           ))}
         </div>
+
+        {/* Buscador */}
         <div className="w-full max-w-2xl flex rounded-2xl overflow-hidden shadow-2xl"
           style={{border:'1px solid #e2e8f0', background:'white'}}>
           <input type="text" placeholder="¿Qué quieres ahorrar hoy?"
             value={termino} onChange={e=>setTermino(e.target.value)}
             onKeyDown={e=>e.key==='Enter'&&buscar()}
-            className="flex-grow px-6 py-4 text-base focus:outline-none"
+            className="flex-grow px-4 py-3 sm:px-6 sm:py-4 text-sm sm:text-base focus:outline-none"
             style={{color:'#1e3a8a'}}/>
           <button id="btn-buscar" onClick={buscar} disabled={cargando}
-            className="px-8 py-4 text-white font-black text-sm hover:opacity-90 transition-opacity"
-            style={{backgroundColor:'#1e293b', minWidth:120}}>
+            className="px-5 sm:px-8 py-3 sm:py-4 text-white font-black text-sm hover:opacity-90 transition-opacity"
+            style={{backgroundColor:'#1e293b', minWidth:80}}>
             {cargando
               ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"/>
               : 'BUSCAR'}
@@ -208,8 +247,9 @@ export default function App() {
         </p>
       </main>
 
-      <footer className="py-10 px-8 text-white" style={{backgroundColor:'#0f172a'}}>
-        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-xs">
+      {/* FOOTER */}
+      <footer className="py-8 px-6 text-white" style={{backgroundColor:'#0f172a'}}>
+        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-xs">
           <div>
             <p className="font-black text-sm mb-2">Compr<span style={{color:'#4ade80'}}>Ahorro</span></p>
             <p style={{color:'#94a3b8'}}>La plataforma inteligente para comparar precios en Panamá.</p>
@@ -235,6 +275,25 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* BANNER PWA */}
+      {showInstall && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white shadow-2xl"
+          style={{borderTop:'2px solid #dbeafe'}}>
+          <div className="max-w-lg mx-auto flex items-center gap-3">
+            <img src="/cerdo-logo.jpg" className="w-11 h-11 rounded-full object-cover flex-shrink-0"/>
+            <div className="flex-grow">
+              <p className="font-black text-sm" style={{color:'#1e3a8a'}}>Instalar ComprAhorro 🐷</p>
+              <p className="text-xs" style={{color:'#94a3b8'}}>Accede más rápido desde tu pantalla de inicio</p>
+            </div>
+            <button onClick={handleInstall}
+              className="px-4 py-2 rounded-xl font-black text-white text-sm flex-shrink-0"
+              style={{backgroundColor:'#1e40af'}}>Instalar</button>
+            <button onClick={()=>setShowInstall(false)}
+              className="text-gray-400 text-xl px-1 flex-shrink-0">✕</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -242,25 +301,26 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col" style={{background:'#f8fafc'}}>
 
-      <nav className="sticky top-0 z-20 bg-white border-b flex items-center gap-3 px-4 py-3"
+      {/* NAVBAR RESULTADOS */}
+      <nav className="sticky top-0 z-20 bg-white border-b flex items-center gap-2 px-3 py-2"
         style={{borderColor:'#e2e8f0', boxShadow:'0 1px 8px rgba(0,0,0,0.06)'}}>
         <button onClick={volverInicio}
-          className="flex items-center gap-1 text-sm font-bold px-3 py-1.5 rounded-lg hover:bg-slate-100 transition-colors flex-shrink-0"
+          className="flex items-center gap-1 text-xs font-bold px-2 py-1.5 rounded-lg hover:bg-slate-100 flex-shrink-0"
           style={{color:'#1e3a8a', border:'1px solid #dbeafe'}}>
           ← Inicio
         </button>
         <img src="/cerdo-logo.jpg" onClick={volverInicio}
-          className="w-8 h-8 rounded-full object-cover cursor-pointer flex-shrink-0" alt="logo"/>
+          className="w-7 h-7 rounded-full object-cover cursor-pointer flex-shrink-0" alt="logo"/>
         <div className="flex flex-grow rounded-xl overflow-hidden"
           style={{border:'1.5px solid #e2e8f0', background:'white', maxWidth:500}}>
           <input type="text" value={termino}
             onChange={e=>setTermino(e.target.value)}
             onKeyDown={e=>e.key==='Enter'&&buscar()}
             placeholder="Nueva búsqueda..."
-            className="flex-grow px-4 py-2 text-sm focus:outline-none"
-            style={{color:'#1e3a8a'}}/>
+            className="flex-grow px-3 py-2 text-sm focus:outline-none"
+            style={{color:'#1e3a8a', minWidth:0}}/>
           <button id="btn-buscar" onClick={buscar} disabled={cargando}
-            className="px-5 py-2 text-white text-sm font-black hover:opacity-90"
+            className="px-4 py-2 text-white text-xs font-black hover:opacity-90 flex-shrink-0"
             style={{backgroundColor:'#1e293b'}}>
             {cargando
               ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
@@ -269,11 +329,11 @@ export default function App() {
         </div>
       </nav>
 
-      <main className="flex-grow max-w-5xl w-full mx-auto px-4 py-8 pb-24">
+      <main className="flex-grow max-w-5xl w-full mx-auto px-3 sm:px-4 py-6 pb-24">
 
         {/* VEREDICTO IA */}
         {veredicto && (
-          <div className="flex items-start gap-3 bg-white rounded-2xl p-5 mb-8 shadow-sm"
+          <div className="flex items-start gap-3 bg-white rounded-2xl p-4 sm:p-5 mb-6 shadow-sm"
             style={{borderLeft:'5px solid #16a34a'}}>
             <span className="text-xl flex-shrink-0">🤖</span>
             <p className="text-sm font-semibold leading-relaxed" style={{color:'#1e3a8a'}}>
@@ -284,7 +344,7 @@ export default function App() {
 
         {/* TARJETA GANADOR */}
         {ganador && (
-          <div className="mb-10">
+          <div className="mb-8">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-lg">🥇</span>
               <h2 className="font-black text-sm tracking-widest uppercase" style={{color:'#15803d'}}>
@@ -293,38 +353,38 @@ export default function App() {
             </div>
             <div className="bg-white rounded-2xl overflow-hidden shadow-lg flex flex-col sm:flex-row"
               style={{border:'2px solid #16a34a'}}>
-              <div className="relative sm:w-52 flex-shrink-0 flex items-center justify-center p-6"
-                style={{background:'linear-gradient(135deg,#f0fdf4,#dcfce7)', minHeight:180}}>
-                <span className="absolute top-3 left-3 text-[10px] font-black uppercase px-2 py-1 rounded-full text-white"
+              <div className="relative sm:w-52 flex-shrink-0 flex items-center justify-center p-5"
+                style={{background:'linear-gradient(135deg,#f0fdf4,#dcfce7)', minHeight:160}}>
+                <span className="absolute top-2 left-2 text-[10px] font-black uppercase px-2 py-1 rounded-full text-white"
                   style={{backgroundColor:'#15803d'}}>💰 Precio más bajo</span>
                 <img src={ganador.imagen||IMG_FALLBACK} alt={ganador.producto}
-                  className="max-h-36 max-w-full object-contain"
+                  className="max-h-32 max-w-full object-contain"
                   onError={e=>{(e.target as HTMLImageElement).src=IMG_FALLBACK}}/>
               </div>
-              <div className="p-6 flex flex-col justify-between flex-grow">
+              <div className="p-5 flex flex-col justify-between flex-grow">
                 <div>
-                  <span className="inline-block text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full mb-3"
+                  <span className="inline-block text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full mb-2"
                     style={{backgroundColor:'#dcfce7', color:'#15803d'}}>{ganador.tienda}</span>
-                  <h3 className="font-bold text-xl leading-snug" style={{color:'#0f172a'}}>
+                  <h3 className="font-bold text-lg leading-snug" style={{color:'#0f172a'}}>
                     {ganador.producto}
                   </h3>
                 </div>
-                <div className="flex items-end justify-between mt-5 flex-wrap gap-3">
+                <div className="flex items-end justify-between mt-4 flex-wrap gap-3">
                   <div>
                     <p className="text-xs font-semibold mb-1" style={{color:'#94a3b8'}}>PRECIO</p>
-                    <span className="text-4xl font-black" style={{color:'#15803d'}}>
+                    <span className="text-3xl sm:text-4xl font-black" style={{color:'#15803d'}}>
                       {ganador.precioFinal}
                     </span>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap">
                     <button onClick={()=>generarFactura(ganador)}
-                      className="text-sm px-5 py-2.5 rounded-xl font-bold hover:opacity-80 transition-opacity"
+                      className="text-sm px-4 py-2 rounded-xl font-bold hover:opacity-80"
                       style={{border:'2px solid #15803d', color:'#15803d'}}>
                       Ver recibo
                     </button>
                     <a href={ganador.affiliateUrl||ganador.link} target="_blank"
                       rel="noopener noreferrer nofollow"
-                      className="text-sm px-6 py-2.5 rounded-xl font-black text-white hover:opacity-90 shadow"
+                      className="text-sm px-5 py-2 rounded-xl font-black text-white hover:opacity-90 shadow"
                       style={{backgroundColor:'#15803d'}}>
                       IR A LA TIENDA →
                     </a>
@@ -337,7 +397,7 @@ export default function App() {
 
         {/* FACTURA */}
         {factura && itemSel && (
-          <div className="bg-white rounded-2xl p-6 mb-8 shadow-sm"
+          <div className="bg-white rounded-2xl p-5 mb-6 shadow-sm"
             style={{border:'1px solid #dbeafe'}}>
             <h2 className="font-black text-lg mb-4" style={{color:'#1e3a8a'}}>🧾 Recibo estimado</h2>
             <p className="text-sm mb-4 font-semibold" style={{color:'#475569'}}>
@@ -373,9 +433,9 @@ export default function App() {
           </div>
         )}
 
-        {/* GRID — todos los que tienen imagen */}
+        {/* GRID — con imagen */}
         {conImagen.length > 0 && (
-          <div className="mb-10">
+          <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
               <span>🛍️</span>
               <h2 className="font-black text-sm tracking-widest uppercase" style={{color:'#1e3a8a'}}>
@@ -386,16 +446,15 @@ export default function App() {
                 {conImagen.length} resultados
               </span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {conImagen.map((item, i) => {
                 const tienePrecio = tienePrecioValido(item);
                 return (
                   <div key={i}
                     className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col"
                     style={{border:'1px solid #f1f5f9'}}>
-                    {/* Imagen */}
-                    <div className="flex items-center justify-center p-4 relative"
-                      style={{background:'#f8fafc', height:170}}>
+                    <div className="flex items-center justify-center p-3 relative"
+                      style={{background:'#f8fafc', height:140}}>
                       {tienePrecio && (
                         <span className="absolute top-2 right-2 text-xs font-black px-2 py-0.5 rounded-full text-white"
                           style={{backgroundColor:'#15803d'}}>
@@ -403,44 +462,38 @@ export default function App() {
                         </span>
                       )}
                       <img src={item.imagen||IMG_FALLBACK} alt={item.producto}
-                        className="max-h-36 max-w-full object-contain"
+                        className="max-h-28 max-w-full object-contain"
                         onError={e=>{(e.target as HTMLImageElement).src=IMG_FALLBACK}}/>
                     </div>
-                    {/* Info */}
-                    <div className="p-4 flex flex-col flex-grow">
-                      <span className="text-[10px] font-black uppercase tracking-widest mb-1"
+                    <div className="p-3 flex flex-col flex-grow">
+                      <span className="text-[9px] font-black uppercase tracking-widest mb-1"
                         style={{color:'#16a34a'}}>{item.tienda}</span>
-                      <h3 className="font-semibold text-sm leading-snug flex-grow"
+                      <h3 className="font-semibold text-xs leading-snug flex-grow"
                         style={{color:'#0f172a'}}>{item.producto}</h3>
                       {item.rating && item.rating > 0 ? (
-                        <p className="text-xs mt-2" style={{color:'#f59e0b'}}>
+                        <p className="text-xs mt-1" style={{color:'#f59e0b'}}>
                           {'★'.repeat(Math.round(item.rating))}
                           {'☆'.repeat(5-Math.round(item.rating))}
-                          {item.reviews
-                            ? <span className="text-gray-400 ml-1">({item.reviews})</span>
-                            : null}
                         </p>
                       ) : null}
-                      {/* Precio grande si lo tiene */}
                       {tienePrecio && (
-                        <p className="text-2xl font-black mt-2" style={{color:'#15803d'}}>
+                        <p className="text-xl font-black mt-2" style={{color:'#15803d'}}>
                           {item.precioFinal}
                         </p>
                       )}
-                      {/* Botones */}
                       <div className="flex gap-2 mt-3 pt-3" style={{borderTop:'1px solid #f1f5f9'}}>
                         {tienePrecio && (
                           <button onClick={()=>generarFactura(item)}
-                            className="text-xs px-3 py-1.5 rounded-lg font-bold hover:opacity-80 flex-shrink-0"
+                            className="text-xs px-2 py-1.5 rounded-lg font-bold hover:opacity-80 flex-shrink-0"
                             style={{border:'1px solid #dbeafe', color:'#1e40af'}}>
                             Recibo
                           </button>
                         )}
                         <a href={item.affiliateUrl||item.link} target="_blank"
                           rel="noopener noreferrer nofollow"
-                          className="text-xs px-4 py-1.5 rounded-lg font-black text-white hover:opacity-90 flex-grow text-center"
+                          className="text-xs px-3 py-1.5 rounded-lg font-black text-white hover:opacity-90 flex-grow text-center"
                           style={{backgroundColor: tienePrecio ? '#1e40af' : '#15803d'}}>
-                          {tienePrecio ? 'Ver tienda →' : 'Ver precio →'}
+                          {tienePrecio ? 'Ver →' : 'Ver precio →'}
                         </a>
                       </div>
                     </div>
@@ -451,9 +504,9 @@ export default function App() {
           </div>
         )}
 
-        {/* LISTA COMPACTA — sin imagen */}
+        {/* LISTA — sin imagen */}
         {sinImagen.length > 0 && (
-          <div className="mb-10">
+          <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
               <span>🔗</span>
               <h2 className="font-black text-sm tracking-widest uppercase" style={{color:'#64748b'}}>
@@ -468,7 +521,7 @@ export default function App() {
               style={{border:'1px solid #f1f5f9'}}>
               {sinImagen.map((item, i) => (
                 <div key={i}
-                  className={`flex items-center gap-4 px-5 py-3 hover:bg-slate-50 transition-colors ${i<sinImagen.length-1?'border-b':''}`}
+                  className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors ${i<sinImagen.length-1?'border-b':''}`}
                   style={{borderColor:'#f8fafc'}}>
                   <div className="flex-grow min-w-0">
                     <p className="text-[10px] font-black uppercase tracking-widest"
@@ -495,7 +548,7 @@ export default function App() {
 
         {/* SIN RESULTADOS */}
         {resultados.length === 0 && !cargando && veredicto && (
-          <div className="text-center py-20">
+          <div className="text-center py-16">
             <p className="text-5xl mb-4">🔍</p>
             <p className="font-bold text-lg mb-2" style={{color:'#1e3a8a'}}>
               No encontramos resultados
@@ -510,10 +563,10 @@ export default function App() {
             </button>
           </div>
         )}
-
       </main>
 
-      <footer className="py-8 px-8 text-white" style={{backgroundColor:'#0f172a'}}>
+      {/* FOOTER */}
+      <footer className="py-8 px-6 text-white" style={{backgroundColor:'#0f172a'}}>
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-xs">
           <div>
             <p className="font-black text-sm mb-2">
@@ -548,6 +601,25 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* BANNER PWA */}
+      {showInstall && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white shadow-2xl"
+          style={{borderTop:'2px solid #dbeafe'}}>
+          <div className="max-w-lg mx-auto flex items-center gap-3">
+            <img src="/cerdo-logo.jpg" className="w-11 h-11 rounded-full object-cover flex-shrink-0"/>
+            <div className="flex-grow">
+              <p className="font-black text-sm" style={{color:'#1e3a8a'}}>Instalar ComprAhorro 🐷</p>
+              <p className="text-xs" style={{color:'#94a3b8'}}>Accede más rápido desde tu pantalla de inicio</p>
+            </div>
+            <button onClick={handleInstall}
+              className="px-4 py-2 rounded-xl font-black text-white text-sm flex-shrink-0"
+              style={{backgroundColor:'#1e40af'}}>Instalar</button>
+            <button onClick={()=>setShowInstall(false)}
+              className="text-gray-400 text-xl px-1 flex-shrink-0">✕</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
