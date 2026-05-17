@@ -146,16 +146,16 @@ export default function App() {
         <p className="text-base sm:text-lg font-bold mb-4" style={{color:'#16a34a'}}>¡Nosotros buscamos, tú ahorras!</p>
 
         {/* Tiendas que comparamos */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {[['Super Xtra','#1d4ed8'],['Super 99','#b91c1c'],['El Machetazo','#c2410c'],['Rey','#15803d']].map(([n,c])=>(
+        <div className="flex flex-wrap justify-center gap-2 mb-8 hidden">
+          {[].map(([n,c])=>(
             <span key={n} className="text-xs font-black px-3 py-1 rounded-full text-white" style={{backgroundColor:c}}>{n}</span>
           ))}
         </div>
 
         <div className="flex gap-5 sm:gap-10 mb-8">
-          {[['1','COMPARA','Precios reales'],['2','ELIGE','Sin presiones'],['3','COMPRA','Sin intermediarios']].map(([n,l,d])=>(
+          {[['COMPARA','Precios reales'],['ELIGE','Sin presiones'],['COMPRA','Sin intermediarios']].map(([l,d])=>(
             <div key={n} className="flex flex-col items-center">
-              <span className="text-2xl sm:text-3xl font-black" style={{color:'#16a34a'}}>{n}</span>
+              
               <span className="text-[10px] sm:text-xs font-black tracking-widest mt-1" style={{color:'#16a34a'}}>{l}</span>
               <span className="text-[10px] sm:text-xs mt-1 hidden sm:block" style={{color:'#94a3b8'}}>{d}</span>
             </div>
@@ -219,7 +219,7 @@ export default function App() {
         {/* VEREDICTO IA */}
         {veredicto && veredicto !== 'Comparando precios en Panamá...' && (
           <div className="flex items-start gap-3 bg-white rounded-2xl p-4 mb-5 shadow-sm" style={{borderLeft:'4px solid #16a34a'}}>
-            <span className="text-xl flex-shrink-0">🤖</span>
+            <img src="/cerdo-logo.jpg" alt="ComprAhorro" className="w-7 h-7 rounded-full object-cover flex-shrink-0"/>
             <p className="text-sm font-semibold leading-relaxed" style={{color:'#1e3a8a'}}>{veredicto}</p>
           </div>
         )}
