@@ -182,6 +182,7 @@ export default function App() {
           
           <div><p className="font-black tracking-widest uppercase mb-3" style={{color:'#94a3b8'}}>Contacto</p><ul className="space-y-2" style={{color:'#cbd5e1'}}><li>Soporte</li><li>Sobre Nosotros</li></ul></div>
         </div>
+        <p className="max-w-5xl mx-auto text-center text-xs mt-6 pt-4" style={{color:'#94a3b8',borderTop:'1px solid #1e293b'}}>🔒 ComprAhorro™ · Marca en proceso de registro · App en fase de pruebas</p>
       </footer>
 
       {showInstall && (
@@ -410,6 +411,7 @@ export default function App() {
           
           <div><p className="font-black tracking-widest uppercase mb-3" style={{color:'#94a3b8'}}>Contacto</p><ul className="space-y-2" style={{color:'#cbd5e1'}}><li>Soporte</li><li>Sobre Nosotros</li></ul></div>
         </div>
+        <p className="max-w-5xl mx-auto text-center text-xs mt-6 pt-4" style={{color:'#94a3b8',borderTop:'1px solid #1e293b'}}>🔒 ComprAhorro™ · Marca en proceso de registro · App en fase de pruebas</p>
       </footer>
 
       {showInstall && (
