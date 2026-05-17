@@ -176,10 +176,10 @@ export default function App() {
       </main>
 
       <footer className="py-8 px-6 text-white" style={{backgroundColor:'#0f172a'}}>
-        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-xs">
+        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-6 text-xs">
           <div><p className="font-black text-sm mb-2">Compr<span style={{color:'#4ade80'}}>Ahorro</span></p><p style={{color:'#94a3b8'}}>La plataforma inteligente para comparar precios en Panamá.</p></div>
           <div><p className="font-black tracking-widest uppercase mb-3" style={{color:'#94a3b8'}}>Navegación</p><ul className="space-y-2" style={{color:'#cbd5e1'}}><li><a href="/" className="hover:text-white">Inicio</a></li><li><a href="/login.html" className="hover:text-white">Mi Cuenta</a></li></ul></div>
-          <div><p className="font-black tracking-widest uppercase mb-3" style={{color:'#94a3b8'}}>Tiendas</p><ul className="space-y-2" style={{color:'#cbd5e1'}}><li>Super Xtra</li><li>Super 99</li><li>El Machetazo</li><li>Rey</li></ul></div>
+          
           <div><p className="font-black tracking-widest uppercase mb-3" style={{color:'#94a3b8'}}>Contacto</p><ul className="space-y-2" style={{color:'#cbd5e1'}}><li>Soporte</li><li>Sobre Nosotros</li></ul></div>
         </div>
       </footer>
@@ -404,10 +404,10 @@ export default function App() {
       </main>
 
       <footer className="py-8 px-6 text-white" style={{backgroundColor:'#0f172a'}}>
-        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-xs">
+        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-6 text-xs">
           <div><p className="font-black text-sm mb-2">Compr<span style={{color:'#4ade80'}}>Ahorro</span></p><p style={{color:'#94a3b8'}}>Compara precios y ahorra en Panamá.</p></div>
           <div><p className="font-black tracking-widest uppercase mb-3" style={{color:'#94a3b8'}}>Navegación</p><ul className="space-y-2" style={{color:'#cbd5e1'}}><li><button onClick={volverInicio} className="hover:text-white">Inicio</button></li><li><a href="/login.html" className="hover:text-white">Mi Cuenta</a></li></ul></div>
-          <div><p className="font-black tracking-widest uppercase mb-3" style={{color:'#94a3b8'}}>Tiendas</p><ul className="space-y-2" style={{color:'#cbd5e1'}}><li>Super Xtra</li><li>Super 99</li><li>El Machetazo</li><li>Rey</li></ul></div>
+          
           <div><p className="font-black tracking-widest uppercase mb-3" style={{color:'#94a3b8'}}>Contacto</p><ul className="space-y-2" style={{color:'#cbd5e1'}}><li>Soporte</li><li>Sobre Nosotros</li></ul></div>
         </div>
       </footer>
