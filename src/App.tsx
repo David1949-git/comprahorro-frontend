@@ -157,7 +157,7 @@ export default function App() {
             <div key={l} className="flex flex-col items-center">
               
               <span className="text-[10px] sm:text-xs font-black tracking-widest mt-1" style={{color:'#16a34a'}}>{l}</span>
-              <span className="text-[10px] sm:text-xs mt-1 hidden sm:block" style={{color:'#94a3b8'}}>{d}</span>
+              <span className="text-[10px] sm:text-xs mt-1 block" style={{color:'#1e3a8a'}}>{d}</span>
             </div>
           ))}
         </div>
