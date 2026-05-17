@@ -13,17 +13,19 @@
   <link rel="stylesheet" href="styles.css"/>
   <style>
     .hero { text-align: center; padding: 52px 20px 40px; }
-    .hero-pig { font-size: 38px; margin: 0 auto 12px; display: inline-flex; align-items: center; justify-content: center; }
+
     .tagline { font-size: 19px; font-weight: 700; color: var(--blue-dark); margin: 0 0 8px; }
     .logout-btn { background: none; border: 1.5px solid var(--blue-border); color: var(--blue-mid); padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: Poppins,sans-serif; transition: all 0.2s; }
     .logout-btn:hover { border-color: #E53E3E; color: #E53E3E; }
+    .back-results-btn { display: inline-block; background: none; border: 1.5px solid #1e3a8a; color: #1e3a8a; padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: Poppins,sans-serif; transition: all 0.2s; }
+    .back-results-btn:hover { background: #1e3a8a; color: #fff; }
   </style>
 </head>
 <body>
 <div class="page-wrapper">
   <nav class="navbar">
     <a href="dashboard.html" class="nav-brand">
-      <img src="principal-home.png" alt="ComprAhorro" class="nav-logo"/>
+      <img src="cerdo-logo.jpg" alt="ComprAhorro" class="nav-logo"/>
       <span class="nav-name">Compr<span>Ahorro</span></span>
     </a>
     <div class="nav-links">
@@ -34,16 +36,19 @@
   <main class="main-content">
     <section class="hero">
       <div class="logo-aura fade-in">
-        <img src="logo.jpeg" alt="ComprAhorro"/>
+        <img src="cerdo-logo.jpg" alt="ComprAhorro"/>
       </div>
-      <div class="hero-pig fade-in-2">🐷</div>
+      
       <h1 class="nav-name fade-in-2" style="font-size:34px;margin-bottom:8px;">Compr<span>Ahorro</span></h1>
-      <div class="badge fade-in-2" style="margin-bottom:14px;">Todo en un solo lugar</div>
-      <p class="tagline fade-in-3">ComprAhorro busca, tú ahorras. Compara opciones en tiempo real, Compra directo, sin intermediarios ni presiones. Elige con un clic tu opción</p>
+      
+      <p class="tagline fade-in-3">¡Nosotros buscamos, tú ahorras!</p>
       <div class="steps fade-in-3">
-        <div class="step"><div class="step-num">1. COMPARA</div><div class="step-sub">Precios reales</div></div>
-        <div class="step"><div class="step-num">2. ELIGE</div><div class="step-sub">Sin presiones</div></div>
-        <div class="step"><div class="step-num">3. COMPRA</div><div class="step-sub">Directo sin intermediarios</div></div>
+        <div class="step"><div class="step-num">COMPARA</div><div class="step-sub">Precios reales</div></div>
+        <div class="step"><div class="step-num">ELIGE</div><div class="step-sub">Sin presiones</div></div>
+        <div class="step"><div class="step-num">COMPRA</div><div class="step-sub">Directo sin intermediarios</div></div>
+      </div>
+      <div id="back-results-container" style="display:none;text-align:center;margin:20px auto;">
+        <button class="back-results-btn" id="back-results-btn">← Volver a resultados</button>
       </div>
       <div class="search-bar fade-in-4" style="max-width:480px;margin:0 auto;">
         <input type="text" id="search-input" placeholder="Que quieres ahorrar hoy?" onkeydown="handleSearch(event)"/>
@@ -70,6 +75,14 @@
     localStorage.removeItem('registroExitoso');
     window.location.href = "results.html?q=" + encodeURIComponent(q);
   }
+  const ultimaBusqueda = localStorage.getItem('comprAhorro_ultima_busqueda');
+  if (ultimaBusqueda) {
+    document.getElementById('back-results-container').style.display = 'block';
+    document.getElementById('back-results-btn').textContent = '← Volver a resultados de "' + ultimaBusqueda + '"';
+    document.getElementById('back-results-btn').onclick = function() {
+      window.location.href = "results.html?q=" + encodeURIComponent(ultimaBusqueda);
+    };
+  }
   function handleSearch(e) { if (e.key === "Enter") goSearch(); }
   function goSearch() {
     const q = document.getElementById("search-input").value.trim();
@@ -78,6 +91,7 @@
   }
   function doLogout() {
     localStorage.removeItem("comprAhorro_token");
+    localStorage.removeItem("comprAhorro_ultima_busqueda");
     window.location.href = "index.html";
   }
 </script>
