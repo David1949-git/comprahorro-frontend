@@ -127,7 +127,7 @@ export default function App() {
           <img src="/cerdo-logo.jpg" className="w-8 h-8 rounded-full object-cover shadow" alt="logo"/>
           <span className="font-extrabold text-lg" style={{color:'#1e3a8a'}}>Compr<span style={{color:'#16a34a'}}>Ahorro</span></span>
         </div>
-        <div className="hidden md:flex gap-1 text-xs font-black tracking-widest" style={{color:'#94a3b8'}}>
+        <div className="hidden md:flex gap-1 text-xs font-black tracking-widest" style={{color:'#1e3a8a'}}>
           <span>COMPARA</span><span className="mx-2">·</span><span>ELIGE</span><span className="mx-2">·</span><span>COMPRA</span>
         </div>
         <div className="flex gap-1 sm:gap-2">
