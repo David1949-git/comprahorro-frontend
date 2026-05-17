@@ -154,7 +154,7 @@ export default function App() {
 
         <div className="flex gap-5 sm:gap-10 mb-8">
           {[['COMPARA','Precios reales'],['ELIGE','Sin presiones'],['COMPRA','Sin intermediarios']].map(([l,d])=>(
-            <div key={n} className="flex flex-col items-center">
+            <div key={l} className="flex flex-col items-center">
               
               <span className="text-[10px] sm:text-xs font-black tracking-widest mt-1" style={{color:'#16a34a'}}>{l}</span>
               <span className="text-[10px] sm:text-xs mt-1 hidden sm:block" style={{color:'#94a3b8'}}>{d}</span>
