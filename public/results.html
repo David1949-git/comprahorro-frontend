@@ -47,7 +47,7 @@
 <div class="page-wrapper">
   <nav class="navbar">
     <a href="index.html" class="nav-brand">
-      <img src="logo.jpeg" alt="ComprAhorro" class="nav-logo"/>
+      <img src="cerdo-logo.jpg" alt="ComprAhorro" class="nav-logo"/>
       <span class="nav-name">Compr<span>Ahorro</span></span>
     </a>
     <div class="nav-links">
@@ -90,7 +90,7 @@
   <footer class="footer">ComprAhorro 2026</footer>
 </div>
 <script>
-  const API_BASE_URL = (window.__API_BASE_URL__ || 'https://comprahorro-backend-1.onrender.com').replace(/\/+$/, '');
+  const API_BASE_URL = (window.__API_BASE_URL__ || 'https://comprahorro-backend-1.onrender.com').replace(/\/+$/, '') + '/api';
   const API_AHORROS_URL = `${API_BASE_URL}/ahorros`;
   const token = localStorage.getItem('comprAhorro_token');
   if (!token) window.location.href = 'login.html';
