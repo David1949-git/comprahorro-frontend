@@ -26,3 +26,6 @@ dist-ssr
 .env*.local
 
 .env
+
+footer_backups_*/
+update_footers.ps1
